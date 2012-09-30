@@ -19,8 +19,7 @@ package com.soeima.resources.file;
 
 import com.soeima.resources.AbstractResourceTest;
 import org.junit.BeforeClass;
-import java.util.Collections;
-import java.util.List;
+import java.io.File;
 
 /**
  * Implements unit tests for the {@link FileResource}.
@@ -45,16 +44,16 @@ public class FileResourceTest extends AbstractResourceTest {
     }
 
     /**
-     * @see  AbstractResourceTest#getProtocolScheme()
+     * @see  AbstractResourceTest#toURL(String)
      */
-    @Override protected String getProtocolScheme() {
-        return "file:/";
+    @Override protected String toURL(String path) {
+        return new File(path).toURI().toString();
     }
 
     /**
-     * @see  AbstractResourceTest#getResourcePaths()
+     * @see  AbstractResourceTest#getResourcePath()
      */
-    @Override protected List<String> getResourcePaths() {
-        return Collections.singletonList(getTestDirPath());
+    @Override protected String getResourcePath() {
+        return getTestDirPath();
     }
 } // end class FileResourceTest

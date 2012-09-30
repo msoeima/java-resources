@@ -20,8 +20,9 @@ package com.soeima.resources.jar;
 import com.soeima.resources.AbstractResource;
 import com.soeima.resources.PathItem;
 import com.soeima.resources.Resource;
+import com.soeima.resources.ResourceException;
 import java.net.URI;
-import java.util.jar.JarFile;
+import java.net.URISyntaxException;
 
 /**
  * Implements a {@link Resource} for a <tt>Jar</tt> or <tt>ZIP</tt> entry.
@@ -45,15 +46,19 @@ public class JarResource extends AbstractResource {
      * @see  Resource#getPath()
      */
     @Override public String getPath() {
-        JarFile jar = ((JarPathItem)getPathItem()).getJar();
-        return null;
+        return getPathItem().getURI() + getName();
     }
 
     /**
      * @see  Resource#getURI()
      */
     @Override public URI getURI() {
-        JarFile jar = ((JarPathItem)getPathItem()).getJar();
-        return null;
+
+        try {
+            return new URI(getPath());
+        }
+        catch (URISyntaxException e) {
+            throw new ResourceException(e);
+        }
     }
 } // end class JarResource

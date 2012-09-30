@@ -161,24 +161,26 @@ public abstract class AbstractResourceTest {
     /**
      * Returns the protocol scheme used by the resources of this unit test.
      *
+     * @param   path
+     *
      * @return  The protocol scheme.
      */
-    protected abstract String getProtocolScheme();
+    protected abstract String toURL(String path);
 
     /**
-     * REturns a list of paths to use within the resource loader for this unit test.
+     * Returns the resource path to use within the resource loader for this unit test.
      *
-     * @return  The list of paths to use for the resource loader.
+     * @return  The resource path to use for the resource loader.
      */
-    protected abstract List<String> getResourcePaths();
+    protected abstract String getResourcePath();
 
     /**
      * Performs non-recursive resource loading tests.
      */
     @Test public void testNonRecursive() {
-        String scheme = getProtocolScheme();
+        String resourcePath = getResourcePath();
         ResourceLoader rl = new ResourceLoader();
-        rl.setPaths(getResourcePaths());
+        rl.addPath(resourcePath);
         Resource resource = rl.getResource(TEST_FILE_RESOURCE1);
         assertNotNull(resource);
         InputStream is = null;
@@ -205,9 +207,9 @@ public abstract class AbstractResourceTest {
             IOUtil.close(is);
         }
 
-        // Use the file protocol.
+        // Use a protocol.
         rl = new ResourceLoader();
-        rl.addPath(scheme + testDirPath);
+        rl.addPath(toURL(resourcePath));
         resource = rl.getResource(TEST_FILE_RESOURCE1);
         assertNotNull(resource);
 
@@ -232,7 +234,7 @@ public abstract class AbstractResourceTest {
             IOUtil.close(is);
         }
 
-        assertEquals(Paths.normalize(Paths.join(testDirPath, relativePath), '/'), resource.getPath());
+        compareURLs(resourcePath, relativePath, resource);
         assertNotNull(resource.getURI());
 
         // Look for "c/TEST_FILE_RESOURCE2".
@@ -248,7 +250,7 @@ public abstract class AbstractResourceTest {
             IOUtil.close(is);
         }
 
-        assertEquals(Paths.normalize(Paths.join(testDirPath, relativePath), '/'), resource.getPath());
+        compareURLs(resourcePath, relativePath, resource);
         assertNotNull(resource.getURI());
 
         // Look for "a/a/TEST_FILE_RESOURCE1".
@@ -264,7 +266,7 @@ public abstract class AbstractResourceTest {
             IOUtil.close(is);
         }
 
-        assertEquals(Paths.normalize(Paths.join(testDirPath, relativePath), '/'), resource.getPath());
+        compareURLs(resourcePath, relativePath, resource);
         assertNotNull(resource.getURI());
 
         // Look for non-existent resources.
@@ -281,7 +283,7 @@ public abstract class AbstractResourceTest {
         }
 
         try {
-            rl.addPath(scheme + "foo");
+            rl.addPath(toURL("foo"));
             fail("Should have raised a ResourceException");
         }
         catch (ResourceException e) {
@@ -290,12 +292,25 @@ public abstract class AbstractResourceTest {
     } // end method testNonRecursive
 
     /**
+     * Compares two <tt>URL</tt>s by constructing a <tt>URL</tt> from the given <code>path</code> and <code>
+     * relativePath</code> and comparing it with the <code>resource</code> <tt>URL</tt>.
+     *
+     * @param  path          The path with which to construct a <tt>URL</tt>.
+     * @param  relativePath  The relative path with which to construct a <tt>URL</tt>.
+     * @param  resource      The resource whose <tt>URL</tt> will be compared with the one constructed with <code>
+     *                       path</code> and <code>relativePath</code>.
+     */
+    private void compareURLs(String path, String relativePath, Resource resource) {
+        assertEquals(Paths.normalize(Paths.join(toURL(path), relativePath), '/'), resource.getURI().toString());
+    }
+
+    /**
      * Performs recursive resource loading tests.
      */
     @Test public void testRecursive() {
         ResourceLoader rl = new ResourceLoader();
         rl.setRecursionType(RecursionType.Recursive);
-        rl.setPaths(getResourcePaths());
+        rl.addPath(getResourcePath());
         Resource resource = rl.getResource(TEST_FILE_RESOURCE1);
         assertNotNull(resource);
         InputStream is = null;

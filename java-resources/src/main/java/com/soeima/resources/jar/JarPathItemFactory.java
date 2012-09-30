@@ -39,8 +39,12 @@ public class JarPathItemFactory implements PathItemFactory {
      */
     @Override public PathItem pathItem(String path) {
 
-        if (path.startsWith("jar:") || path.endsWith(".jar") || path.endsWith(".zip")) {
+        if (path.endsWith(".jar") || path.endsWith(".zip")) {
             return new JarPathItem(path);
+        }
+
+        if (path.startsWith("jar:")) {
+            return new JarURLPathItem(path);
         }
 
         return null;

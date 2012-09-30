@@ -226,7 +226,8 @@ public class Paths {
             return null;
         }
 
-        return new File(path).getParent();
+        String parentPath = new File(path).getParent();
+        return (parentPath != null) ? parentPath : "";
     }
 
     /**
@@ -262,8 +263,52 @@ public class Paths {
             return (path == null) ? root : path;
         }
 
-        root = normalize(root, '/');
-        path = normalize(path, '/');
-        return path.contains(root) ? deSlash(path.substring(root.length())) : "";
+        return startsWithNormalized(path, root) ? deSlash(path.substring(root.length())) : "";
+    }
+
+    /**
+     * Normalizes both <code>path1</code> and <code>path2</code> and then tests if the first is equal to the second.
+     *
+     * @param   path1  The first path to test.
+     * @param   path2  The second path to test.
+     *
+     * @return  <code>true</code> if <code>path1</code> and <code>path2</code> are equal.
+     */
+    public static boolean equalsNormalized(String path1, String path2) {
+
+        if (path1 == path2) {
+            return true;
+        }
+
+        return normalize(path1, '/').equals(normalize(path2, '/'));
+    }
+
+    /**
+     * Normalizes both <code>path1</code> and <code>path2</code> and then tests if the first starts with the second.
+     *
+     * @param   path1  The path to test.
+     * @param   path2  The end part of<code>path1</code>.
+     *
+     * @return  <code>true</code> if <code>path1</code> ends with <code>path2</code>.
+     */
+    public static boolean startsWithNormalized(String path1, String path2) {
+        return normalize(path1, '/').startsWith(normalize(path2, '/'));
+    }
+
+    /**
+     * Normalizes both <code>path1</code> and <code>path2</code> and then tests if the first ends with the second.
+     *
+     * @param   path1  The path to test.
+     * @param   path2  The end part of <code>path1</code>.
+     *
+     * @return  <code>true</code> if <code>path1</code> ends with <code>path2</code>.
+     */
+    public static boolean endsWithNormalized(String path1, String path2) {
+
+        if ((path1 == null) || (path2 == null)) {
+            return false;
+        }
+
+        return normalize(path1, '/').endsWith(normalize(path2, '/'));
     }
 } // end class Paths

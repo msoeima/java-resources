@@ -20,8 +20,6 @@ package com.soeima.resources.jar;
 import com.soeima.resources.AbstractResourceTest;
 import com.soeima.resources.util.Paths;
 import org.junit.BeforeClass;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Implements unit tests for the {@link JarResource}.
@@ -52,16 +50,16 @@ public class JarResourceTest extends AbstractResourceTest {
     }
 
     /**
-     * @see  AbstractResourceTest#getProtocolScheme()
+     * @see  AbstractResourceTest#toURL(String)
      */
-    @Override protected String getProtocolScheme() {
-        return "jar:/";
+    @Override protected String toURL(String path) {
+        return "jar:file:/" + Paths.normalize(path, '/') + "!/";
     }
 
     /**
-     * @see  AbstractResourceTest#getResourcePaths()
+     * @see  AbstractResourceTest#getResourcePath()
      */
-    @Override protected List<String> getResourcePaths() {
-        return Collections.singletonList(zipPath);
+    @Override protected String getResourcePath() {
+        return zipPath;
     }
 } // end class JarResourceTest

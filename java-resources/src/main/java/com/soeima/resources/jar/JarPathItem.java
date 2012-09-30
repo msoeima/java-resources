@@ -24,10 +24,10 @@ import com.soeima.resources.Resource;
 import com.soeima.resources.ResourceException;
 import com.soeima.resources.util.CollectionUtil;
 import com.soeima.resources.util.Paths;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -64,6 +64,17 @@ public class JarPathItem extends AbstractPathItem {
     }
 
     /**
+     * Creates a new {@link JarPathItem} object.
+     *
+     * @param  path  The path to the <tt>Jar</tt> or <tt>ZIP</tt> file.
+     * @param  jar   The backing <tt>Jar</tt> file.
+     */
+    protected JarPathItem(String path, JarFile jar) {
+        super(path);
+        this.jar = jar;
+    }
+
+    /**
      * @see  PathItem#getInputStream(String)
      */
     @Override public InputStream getInputStream(String name) {
@@ -80,60 +91,78 @@ public class JarPathItem extends AbstractPathItem {
      * @see  PathItem#getURI()
      */
     @Override public URI getURI() {
-        return new File(getPath()).toURI();
+
+        try {
+            return new URI(getPath());
+        }
+        catch (URISyntaxException e) {
+            throw new ResourceException(e);
+        }
     }
 
     /**
      * @see  PathItem#findResourcesForExtension(String, RecursionType)
      */
-    @Override public List<Resource> findResourcesForExtension(final String extension, RecursionType recursionType) {
+    @Override public List<Resource> findResourcesForExtension(final String extension,
+                                                              final RecursionType recursionType) {
         return findResources(new JarEntryFilter() {
 
                 /**
                  * @see  JarEntryFilter#accept(String)
                  */
-                @Override public boolean accept(JarEntry jarEntry, String entryName) {
-                    return !jarEntry.isDirectory() && Paths.isExtension(entryName, extension);
+                @Override public boolean accept(String entryName) {
+
+                    if (recursionType == RecursionType.NonRecursive) {
+
+                        if (!Paths.getParentPath(entryName).isEmpty()) {
+                            return false;
+                        }
+                    }
+
+                    return Paths.isExtension(entryName, extension);
                 }
-            }, recursionType, -1);
+            }, -1);
     }
 
     /**
      * @see  AbstractPathItem#findResources(String, RecursionType, int)
      */
-    @Override protected List<Resource> findResources(final String name, RecursionType recursionType, int amount) {
+    @Override protected List<Resource> findResources(final String name, final RecursionType recursionType, int amount) {
         return findResources(new JarEntryFilter() {
 
                 /**
                  * @see  JarEntryFilter#accept(String)
                  */
-                @Override public boolean accept(JarEntry jarEntry, String entryName) {
-                    return !jarEntry.isDirectory() && entryName.equals(name);
+                @Override public boolean accept(String entryName) {
+                    return (recursionType == RecursionType.Recursive) ? Paths.endsWithNormalized(entryName, name)
+                                                                      : Paths.equalsNormalized(entryName, name);
                 }
-            }, recursionType, amount);
+            }, amount);
     }
 
     /**
-     * Returns all of the resources that match the given <code>filter</code>, The <code>filter</code> is passed entries
-     * according to the given <code>recursionType</code>. If <code>amount</code> is a negative value, all matching
-     * entries are returned, otherwise only the <code>amount</code> specified is returned.
+     * Returns all of the resources that match the given <code>filter</code>. The <code>filter</code> is passed the
+     * various <tt>Jar</tt> entries. If <code>amount</code> is a negative value, all matching entries are returned,
+     * otherwise only the <code>amount</code> specified is returned.
      *
-     * @param   filter         The filter criteria used to match the resources that are to be returned.
-     * @param   recursionType  The type of recursion during processing.
-     * @param   amount         The maximum number of resources to return or a negative value indicating all matching
-     *                         resources.
+     * @param   filter  The filter criteria used to match the resources that are to be returned.
+     * @param   amount  The maximum number of resources to return or a negative value indicating all matching resources.
      *
      * @return  A list of {@link Resource}s or an empty list if none are found.
      */
-    private List<Resource> findResources(JarEntryFilter filter, RecursionType recursionType, int amount) {
+    private List<Resource> findResources(JarEntryFilter filter, int amount) {
         List<Resource> resources = new ArrayList<Resource>();
 
         for (Iterator<JarEntry> entryIt = CollectionUtil.asIterator(jar.entries()); entryIt.hasNext();) {
             JarEntry jarEntry = entryIt.next();
-            String entryName =
-                (recursionType == RecursionType.Recursive) ? Paths.getBaseName(jarEntry.getName()) : jarEntry.getName();
 
-            if (filter.accept(jarEntry, entryName)) {
+            if (jarEntry.isDirectory()) {
+                continue;
+            }
+
+            String entryName = jarEntry.getName();
+
+            if (filter.accept(entryName)) {
                 resources.add(new JarResource(this, entryName));
             }
 
@@ -143,12 +172,21 @@ public class JarPathItem extends AbstractPathItem {
         }
 
         return resources;
+    } // end method findResources
+
+    /**
+     * Sets the backing <code>jar</code> file.
+     *
+     * @param  jar  The backing <tt>Jar</tt> file.
+     */
+    protected void setJar(JarFile jar) {
+        this.jar = jar;
     }
 
     /**
-     * Returns the underlying <tt>Jar</tt> file.
+     * Returns the backing <tt>Jar</tt> file.
      *
-     * @return  The underlying {@link JarFile}.
+     * @return  The backing {@link JarFile}.
      */
     protected JarFile getJar() {
         return jar;
@@ -163,17 +201,12 @@ public class JarPathItem extends AbstractPathItem {
     private static interface JarEntryFilter {
 
         /**
-         * Returns <code>true</code> if the given <code>entryName</code> taken from the passed in<code>jarEntry</code>
-         * is valid..
+         * Returns <code>true</code> if the given <code>entryName</code> is valid.
          *
-         * <p>Note that the <code>entryName</code> may have been processed before calling this method and therefore may
-         * not correspon exactually to the entry name returned by the <code>jarEntry</code>.</p>
+         * @param   entryName  The entry name to check.
          *
-         * @param   jarEntry   The <tt>Jar</tt> entry being tested.
-         * @param   entryName  The entry name corresponding to the passed in <code>jarEntry</code>.
-         *
-         * @return  <code>true</code> if this entry is valid; <code>false</code> otherwise.
+         * @return  <code>true</code> if the <code>entryName</code> is valid; <code>false</code> otherwise.
          */
-        boolean accept(JarEntry jarEntry, String entryName);
+        boolean accept(String entryName);
     }
 } // end class JarPathItem
