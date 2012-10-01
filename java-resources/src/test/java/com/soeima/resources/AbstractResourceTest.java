@@ -84,6 +84,7 @@ public abstract class AbstractResourceTest {
         testDir =
             createDirs(Paths.join(System.getProperty("java.io.tmpdir"), testPath),
                        "a",
+                       "aa",
                        "b",
                        "c",
                        "d",
@@ -93,6 +94,7 @@ public abstract class AbstractResourceTest {
         try {
             new File(Paths.join(testDirPath, TEST_FILE_RESOURCE1)).createNewFile();
             new File(Paths.join(Paths.join(testDirPath, "a"), TEST_FILE_RESOURCE1)).createNewFile();
+            new File(Paths.join(Paths.join(testDirPath, "aa"), TEST_FILE_RESOURCE1)).createNewFile();
             new File(Paths.join(Paths.join(testDirPath, "a", "a"), TEST_FILE_RESOURCE1)).createNewFile();
             new File(Paths.join(Paths.join(testDirPath, "a", "a"), TEST_FILE_RESOURCE2)).createNewFile();
             new File(Paths.join(Paths.join(testDirPath, "b"), TEST_FILE_RESOURCE2)).createNewFile();
@@ -326,7 +328,7 @@ public abstract class AbstractResourceTest {
         List<Resource> resources = rl.getResourcesForExtension("file");
         assertNotNull(resources);
         assertFalse(resources.isEmpty());
-        assertEquals(6, resources.size());
+        assertEquals(7, resources.size());
 
         for (Resource r : resources) {
 

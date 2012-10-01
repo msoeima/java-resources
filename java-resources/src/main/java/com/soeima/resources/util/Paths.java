@@ -309,6 +309,6 @@ public class Paths {
             return false;
         }
 
-        return normalize(path1, '/').endsWith(normalize(path2, '/'));
+        return normalize(prefixSlash(path1), '/').endsWith(normalize(prefixSlash(path2), '/'));
     }
 } // end class Paths
