@@ -160,10 +160,10 @@ public class JarPathItem extends AbstractPathItem {
                 continue;
             }
 
-            String entryName = jarEntry.getName();
+            String jarEntryName = jarEntry.getName();
 
-            if (filter.accept(entryName)) {
-                resources.add(new JarResource(this, entryName));
+            if (filter.accept(jarEntryName)) {
+                resources.add(new JarResource(this, jarEntryName));
             }
 
             if (resources.size() == amount) {
