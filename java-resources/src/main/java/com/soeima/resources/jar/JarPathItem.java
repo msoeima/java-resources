@@ -175,15 +175,6 @@ public class JarPathItem extends AbstractPathItem {
     } // end method findResources
 
     /**
-     * Sets the backing <code>jar</code> file.
-     *
-     * @param  jar  The backing <tt>Jar</tt> file.
-     */
-    protected void setJar(JarFile jar) {
-        this.jar = jar;
-    }
-
-    /**
      * Returns the backing <tt>Jar</tt> file.
      *
      * @return  The backing {@link JarFile}.
