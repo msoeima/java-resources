@@ -28,7 +28,7 @@ import com.soeima.resources.annotations.PathItemPlugin;
  * @version  2012/10/01
  */
 @PathItemPlugin(
-                description = "Provides a Tar and GZip resource loading abilities.",
+                description = "Provides a Tar and GZip resource loading cabilities.",
                 displayName = "tar.gz Resource Loader",
                 name = "targz"
                )

@@ -121,7 +121,7 @@ public class PathItemPluginProcessor extends AbstractProcessor {
             return;
         }
 
-        String fileName = getFileName(plugin.displayName());
+        String fileName = getFileName(plugin.name());
         FileObject fo = null;
 
         try {

@@ -12,5 +12,36 @@
   <artifactId>tar-gzip-resources</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>tar.gz. Resource Loader</name>
+  <name>tar.gz Resource Loader</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.soeima</groupId>
+      <artifactId>java-resources-core</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.bsc.maven</groupId>
+        <artifactId>maven-processor-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>process</id>
+            <goals>
+              <goal>process</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <processors>
+                <processor>com.soeima.resources.annotations.PathItemPluginProcessor</processor>
+              </processors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
