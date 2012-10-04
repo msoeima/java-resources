@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.util.List;
 
 /**
- *
+ * A {@link PathItem} for the <code>tar</code> archive format.
  *
  * @author   <a href="mailto:marco.soeima@gmail.com">Marco Soeima</a>
  * @version  2012/10/01

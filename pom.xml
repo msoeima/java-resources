@@ -11,9 +11,9 @@
   <name>Java Resource Loader</name>
 
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <junit.version>4.10</junit.version>
   </properties>
-
 
   <modules>
     <module>java-resources-core</module>
