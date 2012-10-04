@@ -21,6 +21,12 @@ import com.soeima.resources.AbstractPathItem;
 import com.soeima.resources.PathItem;
 import com.soeima.resources.RecursionType;
 import com.soeima.resources.Resource;
+import com.soeima.resources.ResourceException;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -59,6 +65,25 @@ public class TarPathItem extends AbstractPathItem {
      * @see  PathItem#findResources(String, RecursionType, int)
      */
     @Override protected List<Resource> findResources(String name, RecursionType recursionType, int amount) {
+        TarArchiveInputStream is = null;
+
+        try {
+            is = new TarArchiveInputStream(new FileInputStream(getPath()));
+        }
+        catch (FileNotFoundException e) {
+            throw new ResourceException(e);
+        }
+
+        try {
+
+            for (TarArchiveEntry tarEntry = null; tarEntry != null; tarEntry = is.getNextTarEntry()) {
+                tarEntry.getName();
+            }
+        }
+        catch (IOException e) {
+            throw new ResourceException(e);
+        }
+
         return null;
     }
 } // end class TarPathItem

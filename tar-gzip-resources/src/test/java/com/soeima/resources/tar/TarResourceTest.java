@@ -15,52 +15,51 @@
  *
  */
 
-package com.soeima.resources.jar;
+package com.soeima.resources.tar;
 
 import com.soeima.resources.AbstractResourceTest;
 import com.soeima.resources.util.Paths;
 import org.junit.BeforeClass;
 
 /**
- * Implements unit tests for the {@link JarResource}.
+ * Implements unit tests for the {@link TarResource}.
  *
  * @author   <a href="mailto:marco.soeima@gmail.com">Marco Soeima</a>
- * @version  2012/09/30
+ * @version  2012/10/05
  */
-public class JarResourceTest extends AbstractResourceTest {
+public class TarResourceTest extends AbstractResourceTest {
 
-    /** The path to the <tt>Zip</tt> file. */
-    private static String zipPath;
+    /** The path to the <tt>tar</tt> file. */
+    private static String tarPath;
 
     /**
-     * Creates a new {@link JarResourceTest} object.
+     * Creates a new {@link TarResourceTest} object.
      */
-    public JarResourceTest() {
-        super();
+    public TarResourceTest() {
     }
 
     /**
      * @see  AbstractResourceTest#setUp(String)
      */
     @BeforeClass public static void setUp() {
-        AbstractResourceTest.setUp("jar-resource-test");
-        ZipArchiver archiver = new ZipArchiver();
-        archiver.setPath(Paths.join(getTestDirPath(), "zip-resource-test.zip"));
+        AbstractResourceTest.setUp("tar-resource-test");
+        TarArchiver archiver = new TarArchiver();
+        archiver.setPath(Paths.join(getTestDirPath(), "tar-resource-test.tar"));
         archiver.archive(getTestDirPath());
-        zipPath = archiver.getPath();
+        tarPath = archiver.getPath();
     }
 
     /**
      * @see  AbstractResourceTest#toURL(String)
      */
     @Override protected String toURL(String path) {
-        return "jar:file:/" + Paths.normalize(path, '/') + "!/";
+        return "tar:file:/" + path;
     }
 
     /**
      * @see  AbstractResourceTest#getResourcePath()
      */
     @Override protected String getResourcePath() {
-        return zipPath;
+        return tarPath;
     }
-} // end class JarResourceTest
+} // end class TarResourceTest

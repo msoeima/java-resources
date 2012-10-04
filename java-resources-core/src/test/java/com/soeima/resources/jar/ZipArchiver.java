@@ -17,6 +17,7 @@
 
 package com.soeima.resources.jar;
 
+import com.soeima.resources.Archiver;
 import com.soeima.resources.util.IOUtil;
 import com.soeima.resources.util.Paths;
 import java.io.File;
@@ -34,35 +35,40 @@ import java.util.zip.ZipOutputStream;
  * @author   <a href="mailto:marco.soeima@gmail.com">Marco Soeima</a>
  * @version  2012/09/30
  */
-public class ZipArchiver {
+public class ZipArchiver implements Archiver {
 
     /** The name of the <tt>Zip</tt> file. */
     private String archivePath;
 
     /**
      * Creates a new {@link ZipArchiver} object.
-     *
-     * @param  name  The name of the <tt>Zip</tt> file.
      */
-    public ZipArchiver(String name) {
-        archivePath = name;
+    public ZipArchiver() {
     }
 
     /**
-     * Returns the path to the <tt>Zip</tt> file.
-     *
-     * @return  The path to the <tt>Zip</tt> file.
+     * @see  Archiver#setPath(String)
      */
-    public String getPath() {
+    public void setPath(String path) {
+        archivePath = path;
+    }
+
+    /**
+     * @see  Archiver#getPath()
+     */
+    @Override public String getPath() {
         return archivePath;
     }
 
     /**
-     * Recursively archives the given <code>path</code>.
-     *
-     * @param  path  The path to the directory to archive.
+     * @see  Archiver#archive(String)
      */
-    public void archive(String path) {
+    @Override public void archive(String path) {
+
+        if (archivePath == null) {
+            throw new IllegalArgumentException("#setPath must be called before invoking this method.");
+        }
+
         File file = new File(path);
         archive(file, Arrays.asList(file.listFiles()));
     }
