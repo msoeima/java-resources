@@ -54,7 +54,7 @@ public class JarResourceTest extends AbstractResourceTest {
      * @see  AbstractResourceTest#toURL(String)
      */
     @Override protected String toURL(String path) {
-        return Paths.normalize(Paths.join("jar:file:" + path), '/') + "!/";
+        return Paths.normalize(Paths.join("jar:file:", path), '/') + "!/";
     }
 
     /**
