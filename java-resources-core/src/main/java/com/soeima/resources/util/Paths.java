@@ -49,7 +49,7 @@ public class Paths {
             return null;
         }
 
-        return (!name.startsWith(".")) ? ("." + name) : name;
+        return (name.startsWith(".")) ? name : ("." + name);
     }
 
     /**
@@ -190,7 +190,7 @@ public class Paths {
         }
 
         for (String extension : extensions) {
-            return fileName.endsWith(extension.startsWith(".") ? extension : ("." + extension));
+            return fileName.endsWith(prefixDot(extension));
         }
 
         return false;
