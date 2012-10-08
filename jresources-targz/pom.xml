@@ -4,12 +4,12 @@
 
   <parent>
     <groupId>com.soeima</groupId>
-    <artifactId>java-resources</artifactId>
+    <artifactId>jresources</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
   <groupId>com.soeima</groupId>
-  <artifactId>tar-gzip-resources</artifactId>
+  <artifactId>jresources-targz</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>tar.gz Resource Loader</name>
@@ -21,13 +21,13 @@
   <dependencies>
     <dependency>
       <groupId>com.soeima</groupId>
-      <artifactId>java-resources-core</artifactId>
+      <artifactId>jresources-core</artifactId>
       <version>1.0-SNAPSHOT</version>
     </dependency>
 
     <dependency>
       <groupId>com.soeima</groupId>
-      <artifactId>java-resources-core</artifactId>
+      <artifactId>jresources-core</artifactId>
       <version>1.0-SNAPSHOT</version>
       <type>test-jar</type>
       <scope>test</scope>

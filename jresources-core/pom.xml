@@ -4,12 +4,12 @@
 
   <parent>
     <groupId>com.soeima</groupId>
-    <artifactId>java-resources</artifactId>
+    <artifactId>jresources</artifactId>
     <version>1.0-SNAPSHOT</version>
   </parent>
 
   <groupId>com.soeima</groupId>
-  <artifactId>java-resources-core</artifactId>
+  <artifactId>jresources-core</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>Java Resource Loader Core</name>
