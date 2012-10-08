@@ -45,7 +45,7 @@ public class TarItemFactory implements PathItemFactory {
      */
     @Override public PathItem pathItem(String path) {
 
-        if (path.endsWith(".tar") || path.endsWith(".tar.gz") || path.endsWith(".gz")) {
+        if (path.endsWith(".tar") || path.endsWith(".tar.gz") || path.endsWith(".gz") || path.endsWith(".tgz")) {
             return new TarPathItem(path);
         }
 
