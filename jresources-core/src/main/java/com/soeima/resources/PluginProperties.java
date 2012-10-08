@@ -24,7 +24,7 @@ package com.soeima.resources;
 public interface PluginProperties {
 
     /** Extension */
-    String Extension = ".plugin";
+    String Extension = ".extension";
 
     /** FactoryName */
     String FactoryName = "FactoryName";

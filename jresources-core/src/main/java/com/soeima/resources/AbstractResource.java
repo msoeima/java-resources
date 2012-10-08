@@ -17,10 +17,12 @@
 
 package com.soeima.resources;
 
+import com.soeima.resources.util.IOUtil;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
- *
+ * Implements a base class for all {@link Resource} types.
  *
  * @author   <a href="mailto:marco.soeima@gmail.com">Marco Soeima</a>
  * @version  2012/09/25
@@ -49,6 +51,23 @@ public abstract class AbstractResource implements Resource {
      */
     @Override public InputStream getInputStream() {
         return pathItem.getInputStream(name);
+    }
+
+    /**
+     * @see  Resource#getBytes()
+     */
+    @Override public byte[] getBytes() {
+        InputStream is = getInputStream();
+
+        try {
+            return IOUtil.toByteArray(is);
+        }
+        catch (IOException e) {
+            throw new ResourceException(e);
+        }
+        finally {
+            IOUtil.close(is);
+        }
     }
 
     /**

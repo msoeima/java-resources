@@ -17,6 +17,7 @@
 
 package com.soeima.resources;
 
+import com.soeima.resources.extensions.ResourceExtensionLoader;
 import com.soeima.resources.util.Paths;
 import com.soeima.resources.util.ReflectionUtil;
 import com.soeima.resources.util.Strings;
@@ -55,6 +56,10 @@ public class PathItems {
         for (String factory : Strings.split(properties.getProperty(BUILTIN_FACTORIES_PROPERTY))) {
             factories.add(ReflectionUtil.<PathItemFactory>newInstance(factory));
         }
+
+        for (PathItemFactory factory : new ResourceExtensionLoader().load()) {
+            factories.add(factory);
+        }
     }
 
     /**
@@ -90,14 +95,5 @@ public class PathItems {
 
         // Failed to find a PathItem for the path... throw an exception...
         throw new ResourceException("Unsupported path=" + path);
-    }
-
-    /**
-     * Adds the given <code>factory</code> to this allocator.
-     *
-     * @param  factory  The factory to add to this allocator.
-     */
-    public static void addFactory(PathItemFactory factory) {
-        factories.add(factory);
     }
 } // end class PathItems

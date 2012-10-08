@@ -50,4 +50,11 @@ public interface Resource {
      * @return  The {@link URI} to this resource.
      */
     URI getURI();
-}
+
+    /**
+     * Returns a byte array.
+     *
+     * @return  A byte array.
+     */
+    byte[] getBytes();
+} // end interface Resource

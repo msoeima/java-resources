@@ -19,7 +19,7 @@ package com.soeima.resources.tar;
 
 import com.soeima.resources.PathItem;
 import com.soeima.resources.PathItemFactory;
-import com.soeima.resources.annotations.PathItemPlugin;
+import com.soeima.resources.extensions.annotations.ResourceExtension;
 
 /**
  * A {@link PathItem} plugin that handles both <tt>tar</tt> and <tt>g<ip</tt> archives.
@@ -27,11 +27,11 @@ import com.soeima.resources.annotations.PathItemPlugin;
  * @author   <a href="mailto:marco.soeima@gmail.com">Marco Soeima</a>
  * @version  2012/10/01
  */
-@PathItemPlugin(
-                description = "Provides a Tar and GZip resource loading cabilities.",
-                displayName = "tar.gz Resource Loader",
-                name = "targz"
-               )
+@ResourceExtension(
+                   description = "Provides a Tar and GZip resource loading cabilities.",
+                   displayName = "tar.gz Resource Loader",
+                   name = "jresources-targz"
+                  )
 public class TarItemFactory implements PathItemFactory {
 
     /**

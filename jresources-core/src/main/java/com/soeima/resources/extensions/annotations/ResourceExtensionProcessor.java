@@ -15,7 +15,7 @@
  *
  */
 
-package com.soeima.resources.annotations;
+package com.soeima.resources.extensions.annotations;
 
 import com.soeima.resources.PluginProperties;
 import com.soeima.resources.util.IOUtil;
@@ -39,14 +39,14 @@ import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
 /**
- * Process annotations of type {@link PathItemPlugin}.
+ * Process annotations of type {@link ResourceExtension}.
  *
  * @author   <a href="mailto:marco.soeima@gmail.com">Marco Soeima</a>
  * @version  2012/10/01
  */
-@SupportedAnnotationTypes({"com.soeima.resources.annotations.PathItemPlugin"})
+@SupportedAnnotationTypes({"com.soeima.resources.extensions.annotations.ResourceExtension"})
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
-public class PathItemPluginProcessor extends AbstractProcessor {
+public class ResourceExtensionProcessor extends AbstractProcessor {
 
     /** The filer object. */
     private Filer filer;
@@ -55,9 +55,9 @@ public class PathItemPluginProcessor extends AbstractProcessor {
     private Messager messager;
 
     /**
-     * Creates a new {@link PathItemPluginProcessor} object.
+     * Creates a new {@link ResourceExtensionProcessor} object.
      */
-    public PathItemPluginProcessor() {
+    public ResourceExtensionProcessor() {
         super();
     }
 
@@ -78,7 +78,7 @@ public class PathItemPluginProcessor extends AbstractProcessor {
         for (TypeElement element : annotations) {
 
             for (Element annotatedElement : roundEnv.getElementsAnnotatedWith(element)) {
-                PathItemPlugin plugin = annotatedElement.getAnnotation(PathItemPlugin.class);
+                ResourceExtension plugin = annotatedElement.getAnnotation(ResourceExtension.class);
                 createDescriptor(plugin, annotatedElement);
             }
         }
@@ -115,7 +115,7 @@ public class PathItemPluginProcessor extends AbstractProcessor {
      * @param  plugin   The name of the package.
      * @param  element  Represents the annotated element.
      */
-    private void createDescriptor(PathItemPlugin plugin, Element element) {
+    private void createDescriptor(ResourceExtension plugin, Element element) {
 
         if (plugin == null) {
             return;
@@ -149,4 +149,4 @@ public class PathItemPluginProcessor extends AbstractProcessor {
             IOUtil.close(os);
         }
     } // end method createDescriptor
-} // end class PathItemPluginProcessor
+} // end class ResourceExtensionProcessor

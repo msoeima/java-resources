@@ -15,7 +15,7 @@
  *
  */
 
-package com.soeima.resources.annotations;
+package com.soeima.resources.extensions.annotations;
 
 import com.soeima.resources.PathItem;
 import java.lang.annotation.ElementType;
@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.TYPE)
-public @interface PathItemPlugin {
+public @interface ResourceExtension {
 
     /**
      * The {@link PathItem} name.
