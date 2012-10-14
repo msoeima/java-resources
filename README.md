@@ -9,7 +9,7 @@ TODO
 
 ## Documentation
 
-Documentation and tutorials can be found on the [the wiki](https://github.com/msoeima/java-resources/wiki).
+Documentation and tutorials can be found on the [the wiki](https://github.com/msoeima/jresources/wiki).
 
 ## Project lead
 
@@ -22,4 +22,4 @@ Documentation and tutorials can be found on the [the wiki](https://github.com/ms
 
 ## License
 
-java-resources is released under [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
+jresources is released under [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0).
