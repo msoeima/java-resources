@@ -23,7 +23,7 @@ import com.soeima.resources.Resource;
 import java.net.URI;
 
 /**
- *
+ * Implements a {@link Resource} for the secure file transfer protocol, or <tt>SFTP</tt>.
  *
  * @author   <a href="mailto:marco.soeima@gmail.com">Marco Soeima</a>
  * @version  2012/10/16
@@ -33,11 +33,11 @@ public class SFTPResource extends AbstractResource {
     /**
      * Creates a new {@link SFTPResource} object.
      *
-     * @param  pathItem
-     * @param  name
+     * @param  pathItem      The parent {@link PathItem}.
+     * @param  relativePath  The resource's relative path.
      */
-    public SFTPResource(PathItem pathItem, String name) {
-        super(pathItem, name);
+    public SFTPResource(PathItem pathItem, String relativePath) {
+        super(pathItem, relativePath);
     }
 
     /**

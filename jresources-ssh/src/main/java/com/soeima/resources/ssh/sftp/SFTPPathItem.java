@@ -22,6 +22,7 @@ import com.soeima.resources.PathItem;
 import com.soeima.resources.RecursionType;
 import com.soeima.resources.Resource;
 import com.soeima.resources.ResourceException;
+import com.soeima.resources.ssh.util.SSHUtil;
 import com.soeima.resources.util.Paths;
 import com.soeima.resources.util.Strings;
 import net.schmizz.sshj.SSHClient;

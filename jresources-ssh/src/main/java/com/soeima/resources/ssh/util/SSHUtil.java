@@ -15,7 +15,7 @@
  *
  */
 
-package com.soeima.resources.ssh.sftp;
+package com.soeima.resources.ssh.util;
 
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.sftp.SFTPClient;
