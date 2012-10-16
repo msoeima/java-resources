@@ -168,4 +168,53 @@ public class Strings {
 
         return sb.toString();
     }
+
+    /**
+     * *
+     *
+     * @param   string
+     * @param   separator
+     *
+     * @return  String
+     */
+    public static String substringAfter(String string, String separator) {
+
+        if ((string == null) || (separator == null)) {
+            return string;
+        }
+
+        int index = string.indexOf(separator);
+        return (index >= 0) ? string.substring(index + separator.length()) : string;
+    }
+
+    /**
+     * *
+     *
+     * @param   string
+     * @param   separator
+     *
+     * @return  String
+     */
+    public static String substringBefore(String string, String separator) {
+
+        if ((string == null) || (separator == null)) {
+            return string;
+        }
+
+        int index = string.indexOf(separator);
+        return (index >= 0) ? string.substring(0, index) : string;
+    }
+
+    /**
+     * *
+     *
+     * @param   string
+     * @param   beginSep
+     * @param   endSep
+     *
+     * @return  String
+     */
+    public static String substringBetween(String string, String beginSep, String endSep) {
+        return substringBefore(substringAfter(string, beginSep), endSep);
+    }
 } // end class Strings

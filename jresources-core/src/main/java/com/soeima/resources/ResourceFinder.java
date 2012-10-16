@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * The resource finder is used to find resources.
  *
  * @author   <a href="mailto:marco.soeima@gmail.com">Marco Soeima</a>
  * @version  2012/09/25
@@ -32,7 +32,7 @@ public class ResourceFinder {
     /** The search paths. */
     private List<PathItem> pathItems;
 
-    /** recursionType */
+    /** The recursion type to use when finding resources. */
     private RecursionType recursionType;
 
     /**
@@ -64,27 +64,27 @@ public class ResourceFinder {
     }
 
     /**
-     * *
+     * Adds the given <code<pathItem to this resource fine.
      *
-     * @param  pathItem
+     * @param  pathItem  The path item to add.
      */
     public void addPath(PathItem pathItem) {
         pathItems.add(pathItem);
     }
 
     /**
-     * *
+     * Removes the given <code<pathItem to this resource fine.
      *
-     * @param  pathItem
+     * @param  pathItem  The path item to add.
      */
     public void removePath(PathItem pathItem) {
         pathItems.remove(pathItem);
     }
 
     /**
-     * Sets the paths
+     * Sets the path with the given <code>pathItems</code>. Note that all previous path items are deleted.
      *
-     * @param  pathItems
+     * @param  pathItems  The path items to add.
      */
     public void setPaths(List<PathItem> pathItems) {
         this.pathItems.clear();
@@ -113,11 +113,12 @@ public class ResourceFinder {
     }
 
     /**
-     * *
+     * Returns a list of resources that match the given resource <code>name</code>.
      *
-     * @param   name
+     * @param   name  The name of the resource to find.
      *
-     * @return  List
+     * @return  A list of {@link Resource}s for that match the given <code>name</code> or <code>null</code> if none can
+     *          be found.
      */
     public List<Resource> findAll(String name) {
         name = Paths.normalize(name, '/');
@@ -131,13 +132,15 @@ public class ResourceFinder {
     }
 
     /**
-     * *
+     * Returns a list of resources that match the given file <code>extension</code>.
      *
-     * @param   extension
+     * @param   extension  The file extension to find.
      *
-     * @return  List
+     * @return  A list of {@link Resource}s for that match the given file <code>extension</code> or <code>null</code> if
+     *          none can be found.
      */
     public List<Resource> findForExtension(String extension) {
+        extension = Paths.prefixDot(extension);
         List<Resource> resources = new ArrayList<Resource>();
 
         for (PathItem pathItem : pathItems) {

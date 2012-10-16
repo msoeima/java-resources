@@ -17,7 +17,6 @@
 
 package com.soeima.resources;
 
-import com.soeima.resources.util.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -126,6 +125,6 @@ public class ResourceLoader {
      * @return  A list of resources for the given <code>extension</code> or an empty list if there aren't any.
      */
     public List<Resource> getResourcesForExtension(String extension) {
-        return finder.findForExtension(Paths.prefixDot(extension));
+        return finder.findForExtension(extension);
     }
 } // end class ResourceLoader

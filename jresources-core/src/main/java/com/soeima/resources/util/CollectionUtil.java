@@ -21,7 +21,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Provides static convenience methods for working with <tt>Java Collections</tt>.
@@ -97,5 +99,25 @@ public class CollectionUtil {
      */
     public static <E> Collection<E> nonNullCollection(E[] array) {
         return (array == null) ? Collections.<E>emptyList() : Arrays.asList(array);
+    }
+
+    /**
+     * Creates and returns a new map from the two-dimensional <code>array</code>.
+     *
+     * @param   <K>
+     * @param   <V>
+     * @param   array  The two-dimensional array from which a map is created.
+     *
+     * @return  A new map.
+     */
+    @SuppressWarnings("unchecked")
+    public static <K, V> Map<K, V> asMap(Object[][] array) {
+        Map<K, V> map = new HashMap<K, V>();
+
+        for (int i = 0; i < array.length; ++i) {
+            map.put((K)array[i][0], (V)array[i][1]);
+        }
+
+        return map;
     }
 } // end class CollectionUtil
