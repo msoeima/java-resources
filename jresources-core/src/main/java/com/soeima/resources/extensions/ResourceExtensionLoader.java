@@ -19,6 +19,7 @@ package com.soeima.resources.extensions;
 
 import com.soeima.resources.PathItemFactory;
 import com.soeima.resources.PluginProperties;
+import com.soeima.resources.RecursionType;
 import com.soeima.resources.Resource;
 import com.soeima.resources.ResourceLoader;
 import com.soeima.resources.util.IOUtil;
@@ -51,6 +52,7 @@ public class ResourceExtensionLoader {
      */
     public List<PathItemFactory> load() {
         ResourceLoader rl = new ResourceLoader();
+        rl.setRecursionType(RecursionType.Recursive);
 
         for (String path : Strings.split(System.getProperty("java.class.path"), ";")) {
             rl.addPath(path);

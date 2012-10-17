@@ -87,15 +87,14 @@ public class ResourceExtensionProcessor extends AbstractProcessor {
     }
 
     /**
-     * Returns the package name for the given <code>qName</code>.
+     * Returns the factory name for the given <code>element</code>.
      *
-     * @param   qName  The fully qualified name whose package name is to be returned.
+     * @param   element  The element from which to extract the factory name.
      *
-     * @return  The package name for the given <code>qName</code> or an empty string if one does not exist.
+     * @return  The factory name for the given <code>element</code>.
      */
-    private String getPackageName(String qName) {
-        int index = qName.lastIndexOf(".");
-        return (index >= 0) ? qName.substring(0, index) : "";
+    private String getFactoryName(TypeElement element) {
+        return element.getQualifiedName().toString();
     }
 
     /**
@@ -134,7 +133,7 @@ public class ResourceExtensionProcessor extends AbstractProcessor {
 
         Properties properties = new Properties();
         properties.setProperty(PluginProperties.DisplayName, plugin.name());
-        properties.setProperty(PluginProperties.FactoryName, getPackageName(element.toString()));
+        properties.setProperty(PluginProperties.FactoryName, getFactoryName((TypeElement)element));
         properties.setProperty(PluginProperties.Description, plugin.description());
         OutputStream os = null;
 

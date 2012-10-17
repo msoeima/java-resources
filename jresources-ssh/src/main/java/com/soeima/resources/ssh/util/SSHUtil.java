@@ -19,7 +19,6 @@ package com.soeima.resources.ssh.util;
 
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.sftp.SFTPClient;
-import java.io.IOException;
 
 /**
  * Provides static convenience methods for working with <tt>SSH</tt> sessions.
@@ -45,7 +44,7 @@ public class SSHUtil {
         try {
             ssh.close();
         }
-        catch (IOException e) {
+        catch (Exception e) {
             // Do nothing.
         }
     }
@@ -53,15 +52,26 @@ public class SSHUtil {
     /**
      * Silently closes the <code>sftp</code> session.
      *
-     * @param  sftp  The<tt>SFTP</tt> session to close.
+     * @param  sftp  The <tt>SFTP</tt> session to close.
      */
     public static void close(SFTPClient sftp) {
 
         try {
             sftp.close();
         }
-        catch (IOException e) {
+        catch (Exception e) {
             // Do nothing.
         }
+    }
+
+    /**
+     * Silently closes both the the <code>sftp</code> and <code>ssh</code> sessions.
+     *
+     * @param  sftp  The <tt>SFTP</tt> session to close.
+     * @param  ssh   The <tt>SSH</tt> session to close.
+     */
+    public static void close(SFTPClient sftp, SSHClient ssh) {
+        close(sftp);
+        close(ssh);
     }
 } // end class SSHUtil

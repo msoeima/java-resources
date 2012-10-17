@@ -43,6 +43,9 @@ public class PathItems {
     /** The factories used to create {@link PathItem}s. */
     private static List<PathItemFactory> factories = new ArrayList<PathItemFactory>();
 
+    /** Set when resource extensions are first loaded. */
+    private static boolean extensionsLoaded;
+
     static {
         Properties properties = new Properties();
 
@@ -55,10 +58,6 @@ public class PathItems {
 
         for (String factory : Strings.split(properties.getProperty(BUILTIN_FACTORIES_PROPERTY))) {
             factories.add(ReflectionUtil.<PathItemFactory>newInstance(factory));
-        }
-
-        for (PathItemFactory factory : new ResourceExtensionLoader().load()) {
-            factories.add(factory);
         }
     }
 
@@ -85,6 +84,15 @@ public class PathItems {
 
         path = Paths.normalize(path, '/');
 
+        // Load extensions if they haven't yet been loaded.
+        if (!extensionsLoaded) {
+            extensionsLoaded = true;
+
+            for (PathItemFactory factory : new ResourceExtensionLoader().load()) {
+                factories.add(factory);
+            }
+        }
+
         for (PathItemFactory factory : factories) {
             PathItem pathItem = factory.pathItem(path);
 
@@ -95,5 +103,5 @@ public class PathItems {
 
         // Failed to find a PathItem for the path... throw an exception...
         throw new ResourceException("Unsupported path=" + path);
-    }
+    } // end method newPathItem
 } // end class PathItems

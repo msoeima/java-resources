@@ -26,9 +26,11 @@ import com.soeima.resources.ssh.util.SSHUtil;
 import com.soeima.resources.util.Paths;
 import com.soeima.resources.util.Strings;
 import net.schmizz.sshj.SSHClient;
+import net.schmizz.sshj.sftp.RemoteFile;
 import net.schmizz.sshj.sftp.RemoteResourceFilter;
 import net.schmizz.sshj.sftp.RemoteResourceInfo;
 import net.schmizz.sshj.sftp.SFTPClient;
+import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -48,7 +50,7 @@ public class SFTPPathItem extends AbstractPathItem {
     /** The associated <tt>SFTP URI</tt>. */
     private URI sftpURI;
 
-    /** The <tt>SFTP</tt> username. */
+    /** The <tt>SFTP</tt> user name. */
     private String username;
 
     /** The <tt>SFTP</tt> password. */
@@ -88,6 +90,7 @@ public class SFTPPathItem extends AbstractPathItem {
      */
     private SSHClient connect() throws IOException {
         SSHClient ssh = new SSHClient();
+        ssh.addHostKeyVerifier(new PromiscuousVerifier());
         ssh.connect(sftpURI.getHost(), sftpURI.getPort());
         ssh.authPassword(username, password);
         return ssh;
@@ -138,6 +141,20 @@ public class SFTPPathItem extends AbstractPathItem {
      * @see  PathItem#getInputStream(String)
      */
     @Override public InputStream getInputStream(String name) {
+        SSHClient ssh = null;
+        SFTPClient sftp = null;
+
+        try {
+            ssh = connect();
+            sftp = ssh.newSFTPClient();
+            return new RemoteInputStream(sftp.open(name));
+        }
+        catch (IOException e) {
+        }
+        finally {
+            SSHUtil.close(sftp, ssh);
+        }
+
         return null;
     }
 
@@ -176,7 +193,7 @@ public class SFTPPathItem extends AbstractPathItem {
                 for (RemoteResourceInfo resource : sftp.ls(paths.pop(), filter)) {
 
                     if (resource.isDirectory()) {
-                        paths.add(resource.getParent());
+                        paths.add(resource.getPath());
                         continue;
                     }
 
@@ -192,10 +209,84 @@ public class SFTPPathItem extends AbstractPathItem {
             throw new ResourceException(e);
         }
         finally {
-            SSHUtil.close(ssh);
-            SSHUtil.close(sftp);
+            SSHUtil.close(sftp, ssh);
         }
 
         return resources;
     } // end method findResources
+
+    /**
+     * Wraps a {@link RemoteFile} and ensures that it is properly closed when this input stream is also closed.
+     *
+     * @author   <a href="mailto:marco.soeima@gmail.com">Marco Soeima</a>
+     * @version  2012/10/17
+     */
+    private static class RemoteInputStream extends InputStream {
+
+        /** The remote file. */
+        private RemoteFile file;
+
+        /** The remote input stream. */
+        private InputStream is;
+
+        /**
+         * Creates a new {@link RemoteInputStream} object.
+         *
+         * @param  file  The remote file.
+         */
+        public RemoteInputStream(RemoteFile file) {
+            this.file = file;
+            this.is = file.getInputStream();
+        }
+
+        /**
+         * @see  InputStream#read()
+         */
+        @Override public int read() throws IOException {
+            return is.read();
+        }
+
+        /**
+         * @see  InputStream#markSupported()
+         */
+        @Override public boolean markSupported() {
+            return is.markSupported();
+        }
+
+        /**
+         * @see  InputStream#mark(int)
+         */
+        @Override public void mark(int readLimit) {
+            is.mark(readLimit);
+        }
+
+        /**
+         * @see  InputStream#reset()
+         */
+        @Override public void reset() throws IOException {
+            is.reset();
+        }
+
+        /**
+         * @see  InputStream#skip(long)
+         */
+        @Override public long skip(long n) throws IOException {
+            return is.skip(n);
+        }
+
+        /**
+         * @see  InputStream#read()
+         */
+        @Override public int read(byte[] buffer, int off, int len) throws IOException {
+            return is.read(buffer, off, len);
+        }
+
+        /**
+         * @see  InputStream#close()
+         */
+        @Override public void close() throws IOException {
+            super.close();
+            file.close();
+        }
+    } // end class RemoteInputStream
 } // end class SFTPPathItem

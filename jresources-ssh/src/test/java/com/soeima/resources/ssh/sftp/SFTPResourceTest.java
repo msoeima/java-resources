@@ -18,6 +18,7 @@
 package com.soeima.resources.ssh.sftp;
 
 import com.soeima.resources.AbstractResourceTest;
+import com.soeima.resources.util.Paths;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -67,6 +68,7 @@ public class SFTPResourceTest extends AbstractResourceTest {
      * @see  AbstractResourceTest#getResourcePath()
      */
     @Override protected String getResourcePath() {
-        return "sftp://" + sshServer.getUser() + ":" + sshServer.getPassword() + "@localhost";
+        return "sftp://" + sshServer.getUser() + ":" + sshServer.getPassword() + "@localhost:" + sshServer.getPort()
+               + Paths.prefixSlash(getTestDirPath());
     }
 } // end class SFTPResourceTest

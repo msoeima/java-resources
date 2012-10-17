@@ -44,13 +44,13 @@ public class SFTPResource extends AbstractResource {
      * @see  Resource#getPath()
      */
     @Override public String getPath() {
-        return null;
+        return getURI().toASCIIString();
     }
 
     /**
      * @see  Resource#getURI()
      */
     @Override public URI getURI() {
-        return null;
+        return getPathItem().getURI();
     }
 }
