@@ -17,7 +17,6 @@
 
 package com.soeima.resources;
 
-import java.net.URI;
 import java.util.List;
 
 /**
@@ -47,13 +46,6 @@ public abstract class AbstractPathItem implements PathItem {
      */
     protected String getPath() {
         return path;
-    }
-
-    /**
-     * @see  PathItem#getURI()
-     */
-    @Override public URI getURI() {
-        return null;
     }
 
     /**

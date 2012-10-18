@@ -56,6 +56,9 @@ public class SFTPPathItem extends AbstractPathItem {
     /** The <tt>SFTP</tt> password. */
     private String password;
 
+    /** The root path. */
+    private String rootPath;
+
     /**
      * Creates a new {@link SFTPPathItem} object.
      *
@@ -68,6 +71,12 @@ public class SFTPPathItem extends AbstractPathItem {
 
         try {
             sftpURI = new URI(path);
+            rootPath = sftpURI.getPath();
+
+            if (rootPath.isEmpty()) {
+                rootPath = "/";
+            }
+
             String userInfo = sftpURI.getUserInfo();
 
             if (userInfo != null) {
@@ -127,12 +136,19 @@ public class SFTPPathItem extends AbstractPathItem {
                  * @see  RemoteResourceFilter#accept(RemoteResourceInfo)
                  */
                 @Override public boolean accept(RemoteResourceInfo resource) {
+                    String path = resource.getPath();
 
                     if (resource.isDirectory()) {
-                        return recursionType == RecursionType.Recursive;
+
+                        if (recursionType == RecursionType.Recursive) {
+                            return true;
+                        }
+
+                        return Paths.startsWithNormalized(Paths.getParentPath(name),
+                                                          Paths.stripParentPath(path, rootPath));
                     }
 
-                    return Paths.endsWithNormalized(resource.getPath(), name);
+                    return Paths.endsWithNormalized(path, name);
                 }
             }, amount);
     }
@@ -178,15 +194,8 @@ public class SFTPPathItem extends AbstractPathItem {
         try {
             ssh = connect();
             sftp = ssh.newSFTPClient();
-
-            String path = sftpURI.getPath();
-
-            if (path.isEmpty()) {
-                path = "/";
-            }
-
             Stack<String> paths = new Stack<String>();
-            paths.add(path);
+            paths.add(rootPath);
 
             while (!paths.isEmpty()) {
 
@@ -197,7 +206,7 @@ public class SFTPPathItem extends AbstractPathItem {
                         continue;
                     }
 
-                    resources.add(new SFTPResource(this, resource.getPath()));
+                    resources.add(new SFTPResource(this, Paths.stripParentPath(resource.getPath(), rootPath)));
 
                     if (resources.size() == amount) {
                         break;
@@ -214,6 +223,25 @@ public class SFTPPathItem extends AbstractPathItem {
 
         return resources;
     } // end method findResources
+
+    /**
+     * @see  PathItem#getURI()
+     */
+    @Override public URI getURI() {
+
+        try {
+            return new URI(sftpURI.getScheme(),
+                           null,
+                           sftpURI.getHost(),
+                           sftpURI.getPort(),
+                           sftpURI.getPath(),
+                           sftpURI.getQuery(),
+                           sftpURI.getFragment());
+        }
+        catch (URISyntaxException e) {
+            throw new ResourceException(e);
+        }
+    }
 
     /**
      * Wraps a {@link RemoteFile} and ensures that it is properly closed when this input stream is also closed.
@@ -286,6 +314,7 @@ public class SFTPPathItem extends AbstractPathItem {
          */
         @Override public void close() throws IOException {
             super.close();
+            is.close();
             file.close();
         }
     } // end class RemoteInputStream

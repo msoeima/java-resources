@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -84,6 +85,13 @@ public class TarPathItem extends AbstractPathItem {
             throw new ResourceException(e);
         }
 
+        return null;
+    }
+
+    /**
+     * @see  PathItem#getURI()
+     */
+    @Override public URI getURI() {
         return null;
     }
 } // end class TarPathItem

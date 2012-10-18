@@ -20,7 +20,10 @@ package com.soeima.resources.ssh.sftp;
 import com.soeima.resources.AbstractResource;
 import com.soeima.resources.PathItem;
 import com.soeima.resources.Resource;
+import com.soeima.resources.ResourceException;
+import com.soeima.resources.util.Paths;
 import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Implements a {@link Resource} for the secure file transfer protocol, or <tt>SFTP</tt>.
@@ -51,6 +54,12 @@ public class SFTPResource extends AbstractResource {
      * @see  Resource#getURI()
      */
     @Override public URI getURI() {
-        return getPathItem().getURI();
+
+        try {
+            return new URI(getPathItem().getURI().toASCIIString() + Paths.leadingSlash(getName(), '/'));
+        }
+        catch (URISyntaxException e) {
+            throw new ResourceException(e);
+        }
     }
-}
+} // end class SFTPResource

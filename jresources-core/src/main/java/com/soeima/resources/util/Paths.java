@@ -91,7 +91,7 @@ public class Paths {
      *
      * @return  String
      */
-    public static String deSlash(String path) {
+    public static String stripLeadingSlash(String path) {
 
         if (path == null) {
             return null;
@@ -107,7 +107,7 @@ public class Paths {
      *
      * @return  String
      */
-    public static String deTrailingSlash(String path) {
+    public static String stripTrailingSlash(String path) {
 
         if (path == null) {
             return null;
@@ -124,17 +124,30 @@ public class Paths {
      *
      * @return  A slash-prefixed <code>path</code> or <code>null</code> if <code>path</code> is <code>null</code>.
      */
-    public static String prefixSlash(String path) {
+    public static String leadingSlash(String path) {
+        return leadingSlash(path, File.separatorChar);
+    }
+
+    /**
+     * Prefixes the <code>slash</code> at the beginning of the <code>path</code>.
+     *
+     * @param   path   The path to which the slash is to be prefixed.
+     * @param   slash  One of '/' or an '\'.
+     *
+     * @return  A slash-prefixed <code>path</code> or <code>null</code> if <code>path</code> is <code>null</code>.
+     */
+    public static String leadingSlash(String path, char slash) {
 
         if (path == null) {
             return null;
         }
 
-        return hasSlash(path) ? path : join(File.separator, path);
+        return hasSlash(path) ? path : join("", slash, path);
     }
 
     /**
-     * Joins the <code>base</code> path to <code>path</code>
+     * Joins the <code>base</code> path to <code>path</code>. The separator used is defined by {@link
+     * File#separatorChar}.
      *
      * @param   base   The base path.
      * @param   paths  The paths to append to the base path, in the order in which the are passed.
@@ -143,19 +156,33 @@ public class Paths {
      *          either <code>base</code> or <code>paths</code> is <code>null</code>.
      */
     public static String join(String base, String... paths) {
+        return join(base, File.separatorChar, paths);
+    }
+
+    /**
+     * Joins the <code>base</code> path to <code>path</code>, using <code>slash</code> as the separator.
+     *
+     * @param   base   The base path.
+     * @param   slash  One of '/' or '\'.
+     * @param   paths  The paths to append to the base path, in the order in which the are passed.
+     *
+     * @return  A new path resulting from joining the <code>base</code> to <code>paths</code> or <code>null</code> if
+     *          either <code>base</code> or <code>paths</code> is <code>null</code>.
+     */
+    public static String join(String base, char slash, String... paths) {
 
         if ((base == null) || (paths == null)) {
             return null;
         }
 
         List<String> strings = new ArrayList<String>();
-        strings.add(deTrailingSlash(base));
+        strings.add(stripTrailingSlash(base));
 
         for (String path : paths) {
-            strings.add(deSlash(path));
+            strings.add(stripLeadingSlash(path));
         }
 
-        return Strings.join(strings, File.separator);
+        return Strings.join(strings, Character.toString(slash));
     }
 
     /**
@@ -263,7 +290,7 @@ public class Paths {
             return (path == null) ? root : path;
         }
 
-        return startsWithNormalized(path, root) ? deSlash(path.substring(root.length())) : "";
+        return startsWithNormalized(path, root) ? stripLeadingSlash(path.substring(root.length())) : "";
     }
 
     /**
@@ -309,6 +336,23 @@ public class Paths {
             return false;
         }
 
-        return normalize(prefixSlash(path1), '/').endsWith(normalize(prefixSlash(path2), '/'));
+        return normalize(leadingSlash(path1), '/').endsWith(normalize(leadingSlash(path2), '/'));
+    }
+
+    /**
+     * Checks if the paths <code>path1</code> and <code>path2</code> are equals.
+     *
+     * @param   path1  The first path to check for equality.
+     * @param   path2  The second path to check for equality.
+     *
+     * @return  <code>true</code> if the paths are equal; <code>false</code> otherwise.
+     */
+    public static boolean equals(String path1, String path2) {
+
+        if ((path1 == null) || (path2 == null)) {
+            return path1 == path2;
+        }
+
+        return normalize(path1, '/').equals(normalize(path2, '/'));
     }
 } // end class Paths

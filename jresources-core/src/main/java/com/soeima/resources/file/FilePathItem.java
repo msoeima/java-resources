@@ -28,6 +28,7 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -117,6 +118,13 @@ public class FilePathItem extends AbstractPathItem {
         }
 
         return is;
+    }
+
+    /**
+     * @see  PathItem#getURI()
+     */
+    @Override public URI getURI() {
+        return directory.toURI();
     }
 
     /**

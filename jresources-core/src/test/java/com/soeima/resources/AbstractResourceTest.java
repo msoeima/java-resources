@@ -161,13 +161,24 @@ public abstract class AbstractResourceTest {
     }
 
     /**
-     * Returns the protocol scheme used by the resources of this unit test.
+     * Returns a valid <tt>URL</tt> string for the given <code>path</code>.
      *
-     * @param   path
+     * @param   path  The path to transform into a <tt>URL</tt> string.
      *
-     * @return  The protocol scheme.
+     * @return  A valid <tt>URL</tt> string.
      */
     protected abstract String toURL(String path);
+
+    /**
+     * Returns a safe <tt>URL</tt> string.
+     *
+     * @param   path  The path to transform into a safe <tt>URL</tt> string.
+     *
+     * @return  A valid safe <tt>URL</tt> string.
+     */
+    protected String toSafeURL(String path) {
+        return toURL(path);
+    }
 
     /**
      * Returns the resource path to use within the resource loader for this unit test.
@@ -303,7 +314,8 @@ public abstract class AbstractResourceTest {
      *                       path</code> and <code>relativePath</code>.
      */
     private void compareURLs(String path, String relativePath, Resource resource) {
-        assertEquals(Paths.normalize(Paths.join(toURL(path), relativePath), '/'), resource.getURI().toString());
+        assertEquals(Paths.normalize(Paths.join(toSafeURL(path), relativePath), '/'),
+                     resource.getURI().toASCIIString());
     }
 
     /**
