@@ -1,4 +1,4 @@
-# Resource Loader
+# JResources
 
 ## Overview
 
