@@ -39,6 +39,9 @@ import java.util.Properties;
  */
 public class ResourceExtensionLoader {
 
+    /** Indicates if the extensions have already been loaded. */
+    private boolean loaded;
+
     /**
      * Creates a new {@link ResourceExtensionLoader} object.
      */
@@ -50,7 +53,7 @@ public class ResourceExtensionLoader {
      *
      * @return  The list of extension {@link PathItemFactory} objects.
      */
-    public List<PathItemFactory> load() {
+    public List<PathItemFactory> loadExtensions() {
         ResourceLoader rl = new ResourceLoader();
         rl.setRecursionType(RecursionType.Recursive);
 
@@ -81,6 +84,16 @@ public class ResourceExtensionLoader {
             }
         }
 
+        loaded = true;
         return factories;
-    } // end method load
+    } // end method loadExtensions
+
+    /**
+     * Returns <code>true</code> if the extensions have already been loaded.
+     *
+     * @return  <code>true</code> if the extensions have already been loaded; <code>false</code> otherwise.
+     */
+    public boolean extensionsLoaded() {
+        return loaded;
+    }
 } // end class ResourceExtensionLoader
