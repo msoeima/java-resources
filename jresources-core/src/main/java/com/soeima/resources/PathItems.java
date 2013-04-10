@@ -37,14 +37,14 @@ public class PathItems {
     /** Contains the fully qualified names of the built-in set of factories. */
     private static final String FACTORIES_FILE = "/com/soeima/resources/factories.properties";
 
-    /** Property representing the built-in {@link PathItemFactory} objects. */
-    private static final String BUILTIN_FACTORIES_PROPERTY = "resources.builtin.factories";
+    /** Property representing the core {@link PathItemFactory} objects. */
+    private static final String CORE_FACTORIES_PROPERTY = "resources.core.factories";
 
     /** The factories used to create {@link PathItem}s. */
     private static List<PathItemFactory> factories = new ArrayList<PathItemFactory>();
 
-    /** Set when resource extensions are first loaded. */
-    private static boolean extensionsLoaded;
+    /** Loads resource extensions. */
+    private static ResourceExtensionLoader extensionLoader = new ResourceExtensionLoader();
 
     static {
         Properties properties = new Properties();
@@ -56,7 +56,7 @@ public class PathItems {
             // Do nothing.
         }
 
-        for (String factory : Strings.split(properties.getProperty(BUILTIN_FACTORIES_PROPERTY))) {
+        for (String factory : Strings.split(properties.getProperty(CORE_FACTORIES_PROPERTY))) {
             factories.add(ReflectionUtil.<PathItemFactory>newInstance(factory));
         }
     }
@@ -74,7 +74,7 @@ public class PathItems {
      *
      * @return  A new {@link PathItem}.
      *
-     * @throws  ResourceException  If a {@link PathItem} cannot be found for the <code>path</code>.
+     * @throws  ResourceException  If <code>path</code> is <code>null</code>.
      */
     public static PathItem newPathItem(String path) {
 
@@ -83,25 +83,39 @@ public class PathItems {
         }
 
         path = Paths.normalize(path, '/');
+        PathItem pathItem = findPathItem(path);
 
-        // Load extensions if they haven't yet been loaded.
-        if (!extensionsLoaded) {
-            extensionsLoaded = true;
+        // Load the extensions and after they've been loaded, look for the path item.
+        if ((pathItem == null) && !extensionLoader.extensionsLoaded()) {
 
-            for (PathItemFactory factory : new ResourceExtensionLoader().load()) {
+            for (PathItemFactory factory : extensionLoader.loadExtensions()) {
                 factories.add(factory);
             }
+
+            return findPathItem(path);
         }
 
+        return new NullPathItem();
+    } // end method newPathItem
+
+    /**
+     * Finds a {@link PathItem} for the given <code>path</code>.
+     *
+     * @param   path  The path.
+     *
+     * @return  A new {@link PathItem} for the given <code>path</code>.
+     */
+    private static PathItem findPathItem(String path) {
+        PathItem pathItem = null;
+
         for (PathItemFactory factory : factories) {
-            PathItem pathItem = factory.pathItem(path);
+            pathItem = factory.pathItem(path);
 
             if (pathItem != null) {
-                return pathItem;
+                break;
             }
         }
 
-        // Failed to find a PathItem for the path... throw an exception...
-        throw new ResourceException("Unsupported path=" + path);
-    } // end method newPathItem
+        return pathItem;
+    }
 } // end class PathItems

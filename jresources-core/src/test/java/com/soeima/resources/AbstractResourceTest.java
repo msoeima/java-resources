@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
@@ -285,23 +284,6 @@ public abstract class AbstractResourceTest {
         // Look for non-existent resources.
         resource = rl.getResource("foo");
         assertNull(resource);
-
-        // See if an exception is thrown if we try to search in a directory that does not exist.
-        try {
-            rl.addPath("foo");
-            fail("Should have raised a ResourceException");
-        }
-        catch (ResourceException e) {
-            // Expected.
-        }
-
-        try {
-            rl.addPath(toURL("foo"));
-            fail("Should have raised a ResourceException");
-        }
-        catch (ResourceException e) {
-            // Expected.
-        }
     } // end method testNonRecursive
 
     /**
