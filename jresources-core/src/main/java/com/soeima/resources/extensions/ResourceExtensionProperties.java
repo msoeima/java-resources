@@ -23,7 +23,7 @@ package com.soeima.resources.extensions;
  * @author   <a href="mailto:marco.soeima@gmail.com">Marco Soeima</a>
  * @version  $Revision$, 2012/10/01
  */
-public interface ExtensionProperties {
+public interface ResourceExtensionProperties {
 
     /** The file extension. */
     String Extension = ".extension";

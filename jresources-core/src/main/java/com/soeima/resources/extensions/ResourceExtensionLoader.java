@@ -62,7 +62,7 @@ public class ResourceExtensionLoader {
 
         List<PathItemFactory> factories = new ArrayList<PathItemFactory>();
 
-        for (Resource resource : rl.getResourcesForExtension(ExtensionProperties.Extension)) {
+        for (Resource resource : rl.getResourcesForExtension(ResourceExtensionProperties.Extension)) {
             Properties properties = new Properties();
             InputStream is = null;
 
@@ -76,7 +76,7 @@ public class ResourceExtensionLoader {
                 IOUtil.close(is);
             }
 
-            PathItemFactory factory = ReflectionUtil.newInstance(properties.getProperty(ExtensionProperties.FactoryName));
+            PathItemFactory factory = ReflectionUtil.newInstance(properties.getProperty(ResourceExtensionProperties.FactoryName));
 
             if (factory != null) {
                 factories.add(factory);

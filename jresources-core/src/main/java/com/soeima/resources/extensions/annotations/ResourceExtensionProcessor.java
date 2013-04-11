@@ -17,7 +17,7 @@
 
 package com.soeima.resources.extensions.annotations;
 
-import com.soeima.resources.extensions.ExtensionProperties;
+import com.soeima.resources.extensions.ResourceExtensionProperties;
 import com.soeima.resources.util.IOUtil;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -105,11 +105,11 @@ public class ResourceExtensionProcessor extends AbstractProcessor {
      * @return  The name of the file to create.
      */
     private String getFileName(String pkgName) {
-        return (pkgName + ExtensionProperties.Extension);
+        return (pkgName + ResourceExtensionProperties.Extension);
     }
 
     /**
-     * Creates the plugin descriptor file.
+     * Creates the resource extension descriptor file.
      *
      * @param  plugin   The name of the package.
      * @param  element  Represents the annotated element.
@@ -132,9 +132,9 @@ public class ResourceExtensionProcessor extends AbstractProcessor {
         }
 
         Properties properties = new Properties();
-        properties.setProperty(ExtensionProperties.DisplayName, plugin.name());
-        properties.setProperty(ExtensionProperties.FactoryName, getFactoryName((TypeElement)element));
-        properties.setProperty(ExtensionProperties.Description, plugin.description());
+        properties.setProperty(ResourceExtensionProperties.DisplayName, plugin.name());
+        properties.setProperty(ResourceExtensionProperties.FactoryName, getFactoryName((TypeElement)element));
+        properties.setProperty(ResourceExtensionProperties.Description, plugin.description());
         OutputStream os = null;
 
         try {
