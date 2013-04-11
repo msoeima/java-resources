@@ -35,7 +35,7 @@ import java.util.Properties;
 public class PathItems {
 
     /** Contains the fully qualified names of the built-in set of factories. */
-    private static final String FACTORIES_FILE = "/com/soeima/resources/factories.properties";
+    private static final String FACTORIES_FILE = "factories.properties";
 
     /** Property representing the core {@link PathItemFactory} objects. */
     private static final String CORE_FACTORIES_PROPERTY = "resources.core.factories";
@@ -72,6 +72,34 @@ public class PathItems {
      *
      * @param   path  The path from which a {@link PathItem} is created.
      *
+     * @return  A new {@link PathItem} or <code>null</code> if one cannot be found.
+     */
+    private static PathItem createPathItem(String path) {
+        path = Paths.normalize(path, '/');
+        PathItem pathItem = findPathItem(path);
+
+        if (pathItem != null) {
+            return pathItem;
+        }
+
+        // Load the extensions, if required.
+        if (!extensionLoader.extensionsLoaded()) {
+
+            for (PathItemFactory factory : extensionLoader.loadExtensions()) {
+                factories.add(factory);
+            }
+
+            pathItem = findPathItem(path);
+        }
+
+        return pathItem;
+    }
+
+    /**
+     * Creates an instance of a {@link PathItem} from the given <code>path</code>.
+     *
+     * @param   path  The path from which a {@link PathItem} is created.
+     *
      * @return  A new {@link PathItem}.
      *
      * @throws  ResourceException  If <code>path</code> is <code>null</code>.
@@ -82,20 +110,13 @@ public class PathItems {
             throw new ResourceException("The path cannot be null.");
         }
 
-        path = Paths.normalize(path, '/');
-        PathItem pathItem = findPathItem(path);
+        PathItem pathItem = createPathItem(path);
 
-        // Load the extensions and after they've been loaded, look for the path item.
-        if ((pathItem == null) && !extensionLoader.extensionsLoaded()) {
-
-            for (PathItemFactory factory : extensionLoader.loadExtensions()) {
-                factories.add(factory);
-            }
-
-            return findPathItem(path);
+        if (pathItem == null) {
+            return NullPathItem.PathItem;
         }
 
-        return new NullPathItem();
+        return pathItem;
     } // end method newPathItem
 
     /**

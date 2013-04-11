@@ -29,10 +29,13 @@ import java.util.List;
  */
 public class NullPathItem implements PathItem {
 
+    /** The unique {@link NullPathItem} instance. */
+    public static final NullPathItem PathItem = new NullPathItem();
+
     /**
      * Creates a new {@link NullPathItem} object.
      */
-    public NullPathItem() {
+    private NullPathItem() {
     }
 
     /**

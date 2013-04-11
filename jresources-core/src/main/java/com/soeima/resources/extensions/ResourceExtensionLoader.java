@@ -18,7 +18,6 @@
 package com.soeima.resources.extensions;
 
 import com.soeima.resources.PathItemFactory;
-import com.soeima.resources.PluginProperties;
 import com.soeima.resources.RecursionType;
 import com.soeima.resources.Resource;
 import com.soeima.resources.ResourceLoader;
@@ -63,7 +62,7 @@ public class ResourceExtensionLoader {
 
         List<PathItemFactory> factories = new ArrayList<PathItemFactory>();
 
-        for (Resource resource : rl.getResourcesForExtension(PluginProperties.Extension)) {
+        for (Resource resource : rl.getResourcesForExtension(ExtensionProperties.Extension)) {
             Properties properties = new Properties();
             InputStream is = null;
 
@@ -77,7 +76,7 @@ public class ResourceExtensionLoader {
                 IOUtil.close(is);
             }
 
-            PathItemFactory factory = ReflectionUtil.newInstance(properties.getProperty(PluginProperties.FactoryName));
+            PathItemFactory factory = ReflectionUtil.newInstance(properties.getProperty(ExtensionProperties.FactoryName));
 
             if (factory != null) {
                 factories.add(factory);

@@ -36,21 +36,21 @@ public @interface ResourceExtension {
     /**
      * The {@link PathItem} name.
      *
-     * @see PluginProperties#Name
+     * @see ExtensionProperties#Name
      */
     String name();
 
     /**
      * The {@link PathItem} display name.
      *
-     * @see PluginProperties#DisplayName
+     * @see ExtensionProperties#DisplayName
      */
     String displayName();
 
     /**
      * The {@link PathItem} description.
      *
-     * @see PluginProperties#Description
+     * @see ExtensionProperties#Description
      */
     String description();
 }

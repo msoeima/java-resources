@@ -15,26 +15,28 @@
  *
  */
 
-package com.soeima.resources;
+package com.soeima.resources.extensions;
 
 /**
+ * Provides resource extension properties.
+ *
  * @author   <a href="mailto:marco.soeima@gmail.com">Marco Soeima</a>
  * @version  $Revision$, 2012/10/01
  */
-public interface PluginProperties {
+public interface ExtensionProperties {
 
-    /** Extension */
+    /** The file extension. */
     String Extension = ".extension";
 
-    /** FactoryName */
+    /** The resource extension factory name. */
     String FactoryName = "FactoryName";
 
-    /** Name */
+    /** The name of the resource extension. */
     String Name = "Name";
 
-    /** DisplayName */
+    /** The resource extension display name. */
     String DisplayName = "DisplayName";
 
-    /** Description */
+    /** The resource extension description. */
     String Description = "Description";
 }
