@@ -17,21 +17,11 @@
 
 package com.soeima.resources.jar;
 
-import com.soeima.resources.AbstractPathItem;
 import com.soeima.resources.PathItem;
-import com.soeima.resources.RecursionType;
 import com.soeima.resources.Resource;
-import com.soeima.resources.ResourceException;
-import com.soeima.resources.archive.cache.ArchiveCache;
-import com.soeima.resources.archive.cache.ArchiveCachePool;
-import com.soeima.resources.archive.cache.ArchiveEntry;
+import com.soeima.resources.archive.cache.AbstractArchivePathItem;
+import com.soeima.resources.archive.cache.Archive;
 import com.soeima.resources.util.Paths;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.jar.JarFile;
 
 /**
@@ -40,10 +30,10 @@ import java.util.jar.JarFile;
  * @author   <a href="mailto:marco.soeima@gmail.com">Marco Soeima</a>
  * @version  2012/09/25
  */
-public class JarPathItem extends AbstractPathItem {
+public class JarPathItem extends AbstractArchivePathItem {
 
-    /** The backing <tt>Jar</tt> archive cache. */
-    private ArchiveCache cache;
+    /** The <tt>URL</tt> used to override one that is created dynamically. */
+    private String url;
 
     /**
      * Creates a new {@link JarPathItem} object.
@@ -52,129 +42,42 @@ public class JarPathItem extends AbstractPathItem {
      */
     public JarPathItem(String path) {
         super(path);
-        cache = ArchiveCachePool.getCache(new JarArchive(path));
     }
 
     /**
      * Creates a new {@link JarPathItem} object.
      *
-     * @param  path  The path to the <tt>Jar</tt> or <tt>ZIP</tt> file.
-     * @param  jar   The backing <tt>Jar</tt> file.
+     * @param  url  The <tt>URL</tt> to the<tt>Jar</tt> or <tt>ZIP</tt> file.
+     * @param  jar  The backing <tt>Jar</tt> file.
      */
-    protected JarPathItem(String path, JarFile jar) {
-        super(path);
-        this.cache = ArchiveCachePool.getCache(new JarArchive(jar));
+    protected JarPathItem(String url, JarFile jar) {
+        super(jar.getName());
+        this.url = url;
     }
 
     /**
-     * @see  PathItem#getInputStream(String)
+     * @see  AbstractArchivePathItem#toURL(String)
      */
-    @Override public InputStream getInputStream(String name) {
-        return cache.getInputStream(name);
-    }
+    @Override protected String toURL(String path) {
 
-    /**
-     * @see  PathItem#getURI()
-     */
-    @Override public URI getURI() {
-
-        try {
-            return new URI(getPath());
-        }
-        catch (URISyntaxException e) {
-            throw new ResourceException(e);
-        }
-    }
-
-    /**
-     * @see  PathItem#findResourcesForExtension(String, RecursionType)
-     */
-    @Override public List<Resource> findResourcesForExtension(final String extension,
-                                                              final RecursionType recursionType) {
-        return findResources(new JarEntryFilter() {
-
-                /**
-                 * @see  JarEntryFilter#accept(String)
-                 */
-                @Override public boolean accept(String entryName) {
-
-                    if (recursionType == RecursionType.NonRecursive) {
-
-                        if (!Paths.getParentPath(entryName).isEmpty()) {
-                            return false;
-                        }
-                    }
-
-                    return Paths.isExtension(entryName, extension);
-                }
-            }, -1);
-    }
-
-    /**
-     * @see  AbstractPathItem#findResources(String, RecursionType, int)
-     */
-    @Override protected List<Resource> findResources(final String name, final RecursionType recursionType, int amount) {
-        return findResources(new JarEntryFilter() {
-
-                /**
-                 * @see  JarEntryFilter#accept(String)
-                 */
-                @Override public boolean accept(String entryName) {
-                    return (recursionType == RecursionType.Recursive) ? Paths.endsWithNormalized(entryName, name)
-                                                                      : Paths.equalsNormalized(entryName, name);
-                }
-            }, amount);
-    }
-
-    /**
-     * Returns all of the resources that match the given <code>filter</code>. The <code>filter</code> is passed the
-     * various <tt>Jar</tt> entries. If <code>amount</code> is a negative value, all matching entries are returned,
-     * otherwise only the <code>amount</code> specified is returned.
-     *
-     * @param   filter  The filter criteria used to match the resources that are to be returned.
-     * @param   amount  The maximum number of resources to return or a negative value indicating all matching resources.
-     *
-     * @return  A list of {@link Resource}s or an empty list if none are found.
-     */
-    private List<Resource> findResources(JarEntryFilter filter, int amount) {
-        List<Resource> resources = new ArrayList<Resource>();
-
-        for (Iterator<ArchiveEntry> entryIt = cache.getEntries(); entryIt.hasNext();) {
-            ArchiveEntry jarEntry = entryIt.next();
-
-            if (jarEntry.isDirectory()) {
-                continue;
-            }
-
-            String jarEntryName = jarEntry.getName();
-
-            if (filter.accept(jarEntryName)) {
-                resources.add(new JarResource(this, jarEntryName));
-            }
-
-            if (resources.size() == amount) {
-                break;
-            }
+        if (url != null) {
+            return url;
         }
 
-        return resources;
-    } // end method findResources
+        return Paths.normalize("jar:file:/" + path + "!/", '/');
+    }
 
     /**
-     * Instances that implement this interface are used to filter <tt>Jar</tt> entries.
-     *
-     * @author   <a href="mailto:marco.soeima@gmail.com">Marco Soeima</a>
-     * @version  $Revision$, 2012/09/29
+     * @see  AbstractArchivePathItem#newArchive(String)
      */
-    private static interface JarEntryFilter {
+    @Override public Archive newArchive(String path) {
+        return new JarArchive(path);
+    }
 
-        /**
-         * Returns <code>true</code> if the given <code>entryName</code> is valid.
-         *
-         * @param   entryName  The entry name to check.
-         *
-         * @return  <code>true</code> if the <code>entryName</code> is valid; <code>false</code> otherwise.
-         */
-        boolean accept(String entryName);
+    /**
+     * @see  AbstractArchivePathItem#newResource(String)
+     */
+    @Override public Resource newResource(String relativePath) {
+        return new JarResource(this, relativePath);
     }
 } // end class JarPathItem

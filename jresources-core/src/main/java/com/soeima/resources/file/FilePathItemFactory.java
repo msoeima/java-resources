@@ -49,6 +49,10 @@ public class FilePathItemFactory implements PathItemFactory {
         catch (URISyntaxException e) {
         }
 
+        if (file.isDirectory()) {
+
+        }
+
         return file.isDirectory() ? new FilePathItem(file) : null;
     }
-}
+} // end class FilePathItemFactory

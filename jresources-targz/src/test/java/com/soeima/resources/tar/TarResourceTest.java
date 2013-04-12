@@ -53,7 +53,11 @@ public class TarResourceTest extends AbstractResourceTest {
      * @see  AbstractResourceTest#toURL(String)
      */
     @Override protected String toURL(String path) {
-        return "tar:file:/" + path;
+        String url =
+            Paths.isExtension(path, "tar")
+            ? ("tar:file:/" + path + "!/")
+            : ("tar:file:/" + Paths.getParentPath(path) + "!/" + Paths.getBaseName(path));
+        return Paths.normalize(url, '/');
     }
 
     /**

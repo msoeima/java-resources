@@ -217,7 +217,10 @@ public class Paths {
         }
 
         for (String extension : extensions) {
-            return fileName.endsWith(prefixDot(extension));
+
+            if (fileName.endsWith(prefixDot(extension))) {
+                return true;
+            }
         }
 
         return false;

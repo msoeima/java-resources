@@ -66,14 +66,34 @@ public class IOUtil {
      * @throws  IOException  If an I/O error occurs while reading <code>is</code>.
      */
     public static byte[] toByteArray(InputStream is) throws IOException {
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int bytes = 0;
+        ByteArrayOutputStream os = null;
 
-        while ((bytes = is.read(buffer)) != -1) {
-            os.write(buffer, 0, bytes);
+        try {
+            os = new ByteArrayOutputStream();
+            byte[] buffer = new byte[1024];
+            int bytes = 0;
+
+            while ((bytes = is.read(buffer)) != -1) {
+                os.write(buffer, 0, bytes);
+            }
+
+            return os.toByteArray();
         }
+        finally {
+            close(is, os);
+        }
+    }
 
-        return os.toByteArray();
-    } // end method getByteArray
+    /**
+     * Reads all of the bytes from the input stream, <code>is</code>, into a single string.
+     *
+     * @param   is  the input stream to read.
+     *
+     * @return  A string as read from <code>is</code>.
+     *
+     * @throws  IOException  If an I/O error occurs while reading <code>is</code>.
+     */
+    public static String toString(InputStream is) throws IOException {
+        return new String(toByteArray(is));
+    }
 } // end class IOUtil

@@ -77,7 +77,8 @@ public class ResourceExtensionLoader {
                 IOUtil.close(is);
             }
 
-            PathItemFactory factory = ReflectionUtil.newInstance(properties.getProperty(ResourceExtensionProperties.FactoryName));
+            PathItemFactory factory =
+                ReflectionUtil.newInstance(properties.getProperty(ResourceExtensionProperties.FactoryName));
 
             if (factory != null) {
                 factories.add(factory);

@@ -24,10 +24,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import org.junit.Test;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Writer;
 import java.util.List;
 
 /**
@@ -89,17 +94,41 @@ public abstract class AbstractResourceTest {
                        "d",
                        Paths.join("a", "a"));
         testDirPath = testDir.getAbsolutePath();
+        createFile(Paths.join(testDirPath, TEST_FILE_RESOURCE1), "File with contents: " + TEST_FILE_RESOURCE1);
+        createFile(Paths.join(Paths.join(testDirPath, "a"), TEST_FILE_RESOURCE1),
+                   "File with contents: " + TEST_FILE_RESOURCE1);
+        createFile(Paths.join(Paths.join(testDirPath, "aa"), TEST_FILE_RESOURCE1),
+                   "File with contents: " + TEST_FILE_RESOURCE1);
+        createFile(Paths.join(Paths.join(testDirPath, "a", "a"), TEST_FILE_RESOURCE1),
+                   "File with contents: " + TEST_FILE_RESOURCE1);
+        createFile(Paths.join(Paths.join(testDirPath, "a", "a"), TEST_FILE_RESOURCE2),
+                   "File with contents: " + TEST_FILE_RESOURCE2);
+        createFile(Paths.join(Paths.join(testDirPath, "b"), TEST_FILE_RESOURCE2),
+                   "File with contents: " + TEST_FILE_RESOURCE2);
+        createFile(Paths.join(Paths.join(testDirPath, "c"), TEST_FILE_RESOURCE2),
+                   "File with contents: " + TEST_FILE_RESOURCE2);
+    }
+
+    /**
+     * Creates a new AbstractResourceTest object.
+     *
+     * @param  path
+     * @param  contents
+     */
+    private static void createFile(String path, String contents) {
+        Writer writer = null;
+        File file = new File(path);
 
         try {
-            new File(Paths.join(testDirPath, TEST_FILE_RESOURCE1)).createNewFile();
-            new File(Paths.join(Paths.join(testDirPath, "a"), TEST_FILE_RESOURCE1)).createNewFile();
-            new File(Paths.join(Paths.join(testDirPath, "aa"), TEST_FILE_RESOURCE1)).createNewFile();
-            new File(Paths.join(Paths.join(testDirPath, "a", "a"), TEST_FILE_RESOURCE1)).createNewFile();
-            new File(Paths.join(Paths.join(testDirPath, "a", "a"), TEST_FILE_RESOURCE2)).createNewFile();
-            new File(Paths.join(Paths.join(testDirPath, "b"), TEST_FILE_RESOURCE2)).createNewFile();
-            new File(Paths.join(Paths.join(testDirPath, "c"), TEST_FILE_RESOURCE2)).createNewFile();
+            file.createNewFile();
+            writer = new BufferedWriter(new FileWriter(file.getAbsoluteFile()));
+            writer.write(contents);
         }
         catch (IOException e) {
+            fail("Cannot create test file: \"" + path + "\" due to: " + e.getMessage());
+        }
+        finally {
+            IOUtil.close(writer);
         }
     }
 
@@ -195,6 +224,7 @@ public abstract class AbstractResourceTest {
         rl.addPath(resourcePath);
         Resource resource = rl.getResource(TEST_FILE_RESOURCE1);
         assertNotNull(resource);
+        assertEquals(resource.getURI().toASCIIString(), toURL(resource.getPath()));
         InputStream is = null;
 
         try {
@@ -241,6 +271,7 @@ public abstract class AbstractResourceTest {
         try {
             is = resource.getInputStream();
             assertNotNull(is);
+            compareContents(Paths.join(testDirPath, relativePath), is);
         }
         finally {
             IOUtil.close(is);
@@ -257,6 +288,7 @@ public abstract class AbstractResourceTest {
         try {
             is = resource.getInputStream();
             assertNotNull(is);
+            compareContents(Paths.join(testDirPath, relativePath), is);
         }
         finally {
             IOUtil.close(is);
@@ -273,6 +305,7 @@ public abstract class AbstractResourceTest {
         try {
             is = resource.getInputStream();
             assertNotNull(is);
+            compareContents(Paths.join(testDirPath, relativePath), is);
         }
         finally {
             IOUtil.close(is);
@@ -298,6 +331,30 @@ public abstract class AbstractResourceTest {
     private void compareURLs(String path, String relativePath, Resource resource) {
         assertEquals(Paths.normalize(Paths.join(toSafeURL(path), relativePath), '/'),
                      resource.getURI().toASCIIString());
+    }
+
+    /**
+     * Compares the contents the given file represented by <code>fileName</code> against the contents of the given input
+     * stream, <code>is</code>.
+     *
+     * <p>This method will close the input stream, <code>is</code>, before exiting.</p>
+     *
+     * @param  fileName  The name of the file.
+     * @param  is        The input stream.
+     */
+    private void compareContents(String fileName, InputStream is) {
+
+        try {
+            String fileContents = IOUtil.toString(new FileInputStream(fileName));
+            String streamContents = IOUtil.toString(is);
+            assertEquals(fileContents, streamContents);
+        }
+        catch (IOException e) {
+            fail("Exception occured while comparing contents of input stream and file: " + e.getMessage());
+        }
+        finally {
+            IOUtil.close(is);
+        }
     }
 
     /**

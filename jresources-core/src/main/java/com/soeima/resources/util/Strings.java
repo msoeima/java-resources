@@ -170,12 +170,14 @@ public class Strings {
     }
 
     /**
-     * *
+     * Returns the substring after the first occurrence of the <code>separator</code> within the <code>string</code>.
+     * The separator is not returned.
      *
-     * @param   string
-     * @param   separator
+     * @param   string     The string to get a substring from.
+     * @param   separator  The string to search for.
      *
-     * @return  String
+     * @return  The substring after the first occurrence of the <code>separator</code> or the <code>string</code> if the
+     *          <code>separator</code> cannot be found.
      */
     public static String substringAfter(String string, String separator) {
 
@@ -188,12 +190,14 @@ public class Strings {
     }
 
     /**
-     * *
+     * Returns the substring before the first occurrence of the <code>separator</code> within the <code>string</code>.
+     * The separator is not returned.
      *
-     * @param   string
-     * @param   separator
+     * @param   string     The string to get a substring from.
+     * @param   separator  The string to search for.
      *
-     * @return  String
+     * @return  The substring before the first occurrence of the <code>separator</code> or the <code>string</code> if
+     *          the <code>separator</code> cannot be found.
      */
     public static String substringBefore(String string, String separator) {
 
@@ -206,13 +210,15 @@ public class Strings {
     }
 
     /**
-     * *
+     * Returns the substring between the first occurrences of the <code>endSep</code> and <code>endSep</code> within the
+     * <code>string</code>. The separator is not returned.
      *
-     * @param   string
-     * @param   beginSep
-     * @param   endSep
+     * @param   string    The string to get a substring from.
+     * @param   beginSep  The string before the substring.
+     * @param   endSep    The string after the substring.
      *
-     * @return  String
+     * @return  The substring between the first occurrence of <code>beginSep</code> and <code>endSep</code> or the
+     *          <code>string</code> if the <code>separator</code> cannot be found.
      */
     public static String substringBetween(String string, String beginSep, String endSep) {
         return substringBefore(substringAfter(string, beginSep), endSep);

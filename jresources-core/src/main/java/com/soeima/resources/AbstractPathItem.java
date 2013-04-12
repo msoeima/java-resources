@@ -33,18 +33,16 @@ public abstract class AbstractPathItem implements PathItem {
     /**
      * Creates a new {@link AbstractPathItem} object.
      *
-     * @param  path  The path to abstract.
+     * @param  path  The backing path.
      */
     public AbstractPathItem(String path) {
         this.path = path;
     }
 
     /**
-     * Returns the underlying path.
-     *
-     * @return  The underlying path.
+     * @see  PathItem#getPath()
      */
-    protected String getPath() {
+    @Override public String getPath() {
         return path;
     }
 

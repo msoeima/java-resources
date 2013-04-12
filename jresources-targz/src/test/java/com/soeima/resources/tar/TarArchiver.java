@@ -22,7 +22,6 @@ import com.soeima.resources.util.IOUtil;
 import com.soeima.resources.util.Paths;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
-import org.apache.commons.compress.utils.IOUtils;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -75,53 +74,56 @@ public class TarArchiver implements Archiver {
      * @param  archivePath  The path to the archive to create.
      */
     private void archive(String path, String archivePath) {
-        TarArchiveOutputStream os = null;
+        TarArchiveOutputStream taos = null;
 
         try {
-            os = new TarArchiveOutputStream(new BufferedOutputStream(new FileOutputStream(new File(archivePath))));
-            addFile(os, path, "");
+            taos = new TarArchiveOutputStream(new BufferedOutputStream(new FileOutputStream(new File(archivePath))));
+            taos.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
+
+            for (File file : new File(path).listFiles()) {
+                addFile(taos, file.getAbsolutePath(), "");
+            }
         }
         catch (IOException e) {
         }
         finally {
-            IOUtil.close(os);
+            IOUtil.close(taos);
         }
     }
 
     /**
      * Adds the given <code>path</code> to the output stream, <code>os</code>.
      *
-     * @param   os    The tar file's output stream
+     * @param   taos  The tar file's output stream
      * @param   path  The file system path of the file/directory being added
      * @param   base  The base prefix to for the name of the tar file entry
      *
      * @throws  IOException  If an I/O error occurs.
      */
-    private void addFile(TarArchiveOutputStream os, String path, String base) throws IOException {
+    private void addFile(TarArchiveOutputStream taos, String path, String base) throws IOException {
         File file = new File(path);
-        String entryName = Paths.normalize(Paths.join(base, file.getName()), '/');
-        TarArchiveEntry tarEntry = new TarArchiveEntry(file, entryName);
-        os.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
-        os.putArchiveEntry(tarEntry);
+        String entryName = Paths.stripLeadingSlash(Paths.normalize(Paths.join(base, file.getName()), '/'));
 
-        try {
+        if (file.isFile()) {
 
-            if (file.isFile()) {
-                IOUtils.copy(new FileInputStream(file), os);
+            try {
+                TarArchiveEntry tarEntry = new TarArchiveEntry(file, entryName);
+                taos.putArchiveEntry(tarEntry);
+                taos.write(IOUtil.toByteArray(new FileInputStream(file)));
             }
-            else {
-                File[] files = file.listFiles();
-
-                if (files != null) {
-
-                    for (File f : files) {
-                        addFile(os, f.getAbsolutePath(), Paths.join(entryName, "/"));
-                    }
-                }
+            finally {
+                taos.closeArchiveEntry();
             }
         }
-        finally {
-            os.closeArchiveEntry();
+        else {
+            File[] files = file.listFiles();
+
+            if (files != null) {
+
+                for (File f : files) {
+                    addFile(taos, f.getAbsolutePath(), Paths.leadingSlash(entryName, '/'));
+                }
+            }
         }
     } // end method addFile
 } // end class TarArchiver

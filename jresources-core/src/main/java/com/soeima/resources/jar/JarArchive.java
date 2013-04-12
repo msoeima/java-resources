@@ -117,14 +117,7 @@ public class JarArchive implements Archive {
      * @see  Archive#getEntries()
      */
     @Override public Iterator<ArchiveEntry> getEntries() {
-        return new JarArchiveIterator(jar);
-    }
-
-    /**
-     * @see  Archive#getEntry(String)
-     */
-    @Override public ArchiveEntry getEntry(String name) {
-        return new JarArchiveEntry(jar, jar.getJarEntry(name));
+        return new JarEntryIterator(jar);
     }
 
     /**
@@ -140,7 +133,7 @@ public class JarArchive implements Archive {
      * @author   <a href="mailto:marco.soeima@gmail.com">Marco Soeima</a>
      * @version  2013/04/12
      */
-    private class JarArchiveIterator implements Iterator<ArchiveEntry> {
+    private class JarEntryIterator implements Iterator<ArchiveEntry> {
 
         /** The backing <tt>Jar</tt> file. */
         private JarFile jar;
@@ -149,11 +142,11 @@ public class JarArchive implements Archive {
         private Enumeration<JarEntry> jarEnumeration;
 
         /**
-         * Creates a new {@link JarArchiveIterator} object.
+         * Creates a new {@link JarEntryIterator} object.
          *
          * @param  jarFile  The backing <tt>Jar</tt> file.
          */
-        public JarArchiveIterator(JarFile jarFile) {
+        public JarEntryIterator(JarFile jarFile) {
             this.jar = jarFile;
             this.jarEnumeration = jarFile.entries();
         }
@@ -178,7 +171,7 @@ public class JarArchive implements Archive {
         @Override public void remove() {
             throw new UnsupportedOperationException("#remove is not supported.");
         }
-    } // end class JarArchiveIterator
+    } // end class JarEntryIterator
 
     /**
      * Wraps a regular <tt>Jar</tt> entry so that it acts as an {@link ArchiveEntry}.

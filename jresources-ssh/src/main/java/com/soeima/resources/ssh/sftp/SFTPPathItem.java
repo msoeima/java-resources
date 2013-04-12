@@ -163,12 +163,9 @@ public class SFTPPathItem extends AbstractPathItem {
         try {
             ssh = connect();
             sftp = ssh.newSFTPClient();
-            return new RemoteInputStream(sftp.open(name));
+            return new RemoteInputStream(Paths.normalize(Paths.join(rootPath, name), '/'), ssh, sftp);
         }
         catch (IOException e) {
-        }
-        finally {
-            SSHUtil.close(sftp, ssh);
         }
 
         return null;
@@ -257,14 +254,29 @@ public class SFTPPathItem extends AbstractPathItem {
         /** The remote input stream. */
         private InputStream is;
 
+        /** The <tt>SSH</tt> client. */
+        private SSHClient ssh;
+
+        /** THe <tt>SFTP</tt> client. */
+        private SFTPClient sftp;
+
         /**
-         * Creates a new {@link RemoteInputStream} object.
+         * Creates a new RemoteInputStream object.
          *
-         * @param  file  The remote file.
+         * @param  fileName  The name of the file to retrieve via <tt>SFTP</tt>.
+         * @param  ssh       The backing <tt>SSH</tt> client.
+         * @param  sftp      The backing <tt>SFTP</tt> client.
          */
-        public RemoteInputStream(RemoteFile file) {
-            this.file = file;
-            this.is = file.getInputStream();
+        public RemoteInputStream(String fileName, SSHClient ssh, SFTPClient sftp) {
+            this.ssh = ssh;
+            this.sftp = sftp;
+
+            try {
+                file = sftp.open(fileName);
+                is = file.getInputStream();
+            }
+            catch (IOException e) {
+            }
         }
 
         /**
@@ -314,6 +326,7 @@ public class SFTPPathItem extends AbstractPathItem {
          */
         @Override public void close() throws IOException {
             super.close();
+            SSHUtil.close(sftp, ssh);
             is.close();
             file.close();
         }

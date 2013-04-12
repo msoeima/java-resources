@@ -19,8 +19,8 @@
 
   <modules>
     <module>jresources-core</module>
-    <!--module>jresources-targz</module-->
     <module>jresources-ssh</module>
+    <module>jresources-targz</module>
   </modules>
 
   <build>

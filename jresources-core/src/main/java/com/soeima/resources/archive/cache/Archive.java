@@ -45,9 +45,9 @@ public interface Archive extends Closeable {
     String getPath();
 
     /**
-     * Returns the size of the archive.
+     * Returns the number of entries in this archive.
      *
-     * @return  The size of the archive.
+     * @return  The number of entries in this archive or <code>-1</code> if this is unknown.
      */
     int size();
 
@@ -71,16 +71,6 @@ public interface Archive extends Closeable {
      * @return  An {@link Iterator} of {@link ArchiveEntry} objects.
      */
     Iterator<ArchiveEntry> getEntries();
-
-    /**
-     * Returns the archive entry represented by the given <code>name</code>.
-     *
-     * @param   name  The name of the archive entry to return.
-     *
-     * @return  The {@link ArchiveEntry} for the given <code>name</code> or <code>null</code> if <code>name</code> does
-     *          not represent an archive entry.
-     */
-    ArchiveEntry getEntry(String name);
 
     /**
      * Returns an input stream for the given <code>entry</code>.

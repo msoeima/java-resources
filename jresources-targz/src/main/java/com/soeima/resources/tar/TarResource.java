@@ -15,27 +15,27 @@
  *
  */
 
-package com.soeima.resources.jar;
+package com.soeima.resources.tar;
 
 import com.soeima.resources.PathItem;
 import com.soeima.resources.Resource;
 import com.soeima.resources.archive.cache.AbstractArchiveResource;
 
 /**
- * Implements a {@link Resource} for a <tt>Jar</tt> or <tt>ZIP</tt> entry.
+ * Implements a {@link Resource} for <tt>tar</tt> archives.
  *
  * @author   <a href="mailto:marco.soeima@gmail.com">Marco Soeima</a>
- * @version  2012/09/25
+ * @version  2013/04/15
  */
-public class JarResource extends AbstractArchiveResource {
+public class TarResource extends AbstractArchiveResource {
 
     /**
-     * Creates a new {@link JarResource} object.
+     * Creates a new {@link TarResource} object.
      *
-     * @param  pathItem  The path item that contains this resource.
-     * @param  name      The resource name.
+     * @param  pathItem      The containing path item.
+     * @param  relativePath  The relative path to the resource within the <code>pathItem</code>.
      */
-    public JarResource(PathItem pathItem, String name) {
-        super(pathItem, name);
+    public TarResource(PathItem pathItem, String relativePath) {
+        super(pathItem, relativePath);
     }
-} // end class JarResource
+} // end class TarResource

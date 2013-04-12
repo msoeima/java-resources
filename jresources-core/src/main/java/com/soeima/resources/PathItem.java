@@ -30,32 +30,32 @@ import java.util.List;
 public interface PathItem {
 
     /**
-     * *
+     * Finds the resource with the given <code>name</code> according to the given <code>recursionType</code>.
      *
-     * @param   name
-     * @param   recursionType
+     * @param   name           The name of the resource to find.
+     * @param   recursionType  The recursion type used to find the resource.
      *
-     * @return  Resource
+     * @return  The requested {@link Resource} or <code>null</code> if it cannot be found.
      */
     Resource findResource(String name, RecursionType recursionType);
 
     /**
-     * *
+     * Finds the resources with the given <code>name</code> according to the given <code>recursionType</code>.
      *
-     * @param   name
-     * @param   recursionType
+     * @param   name           The name of the resources to find.
+     * @param   recursionType  The recursion type used to find the resource.
      *
-     * @return  List
+     * @return  The requested {@link Resource}s or an empty list if none can be found.
      */
     List<Resource> findResources(String name, RecursionType recursionType);
 
     /**
-     * *
+     * Finds the resources with the given <code>extension</code> according to the given <code>recursionType</code>.
      *
-     * @param   extension
-     * @param   recursionType
+     * @param   extension      The extensions of the resources to find.
+     * @param   recursionType  The recursion type used to find the resource.
      *
-     * @return  Resource
+     * @return  The requested {@link Resource}s or an empty list if none can be found.
      */
     List<Resource> findResourcesForExtension(String extension, RecursionType recursionType);
 
@@ -67,6 +67,13 @@ public interface PathItem {
      * @return  An {@link InputStream} for the given <code>name</code> or <code>null</code> if one cannot be found.
      */
     InputStream getInputStream(String name);
+
+    /**
+     * Returns the path for this path item.
+     *
+     * @return  The path for this path item.
+     */
+    String getPath();
 
     /**
      * Returns the <code>URI</code> for this path item.

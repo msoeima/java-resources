@@ -20,6 +20,7 @@ package com.soeima.resources.tar;
 import com.soeima.resources.PathItem;
 import com.soeima.resources.PathItemFactory;
 import com.soeima.resources.extensions.annotations.ResourceExtension;
+import com.soeima.resources.util.Strings;
 
 /**
  * A {@link PathItem} plugin that handles both <tt>tar</tt> and <tt>g<ip</tt> archives.
@@ -28,16 +29,16 @@ import com.soeima.resources.extensions.annotations.ResourceExtension;
  * @version  2012/10/01
  */
 @ResourceExtension(
-                   description = "Provides a Tar and GZip resource loading cabilities.",
-                   displayName = "tar.gz Resource Loader",
+                   description = "Loads resources from tar archives.",
+                   displayName = "tar Resource Loader",
                    name = "jresources-targz"
                   )
-public class TarItemFactory implements PathItemFactory {
+public class TarPathItemFactory implements PathItemFactory {
 
     /**
-     * Creates a new {@link TarItemFactory} object.
+     * Creates a new {@link TarPathItemFactory} object.
      */
-    public TarItemFactory() {
+    public TarPathItemFactory() {
     }
 
     /**
@@ -45,10 +46,14 @@ public class TarItemFactory implements PathItemFactory {
      */
     @Override public PathItem pathItem(String path) {
 
-        if (path.endsWith(".tar") || path.endsWith(".tar.gz") || path.endsWith(".gz") || path.endsWith(".tgz")) {
+        if (path.startsWith("tar:")) {
+            return new TarPathItem(Strings.substringBetween(path, ":/", "!/"));
+        }
+
+        if (path.endsWith(".tar")) {
             return new TarPathItem(path);
         }
 
         return null;
     }
-}
+} // end class TarPathItemFactory

@@ -72,4 +72,11 @@ public class NullPathItem implements PathItem {
     @Override public URI getURI() {
         return null;
     }
+
+    /**
+     * @see  PathItem#getPath()
+     */
+    @Override public String getPath() {
+        return null;
+    }
 } // end class NullPathItem

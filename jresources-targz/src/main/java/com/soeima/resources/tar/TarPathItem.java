@@ -17,19 +17,11 @@
 
 package com.soeima.resources.tar;
 
-import com.soeima.resources.AbstractPathItem;
 import com.soeima.resources.PathItem;
-import com.soeima.resources.RecursionType;
 import com.soeima.resources.Resource;
-import com.soeima.resources.ResourceException;
-import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
-import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.util.List;
+import com.soeima.resources.archive.cache.AbstractArchivePathItem;
+import com.soeima.resources.archive.cache.Archive;
+import com.soeima.resources.util.Paths;
 
 /**
  * A {@link PathItem} for the <code>tar</code> archive format.
@@ -37,7 +29,7 @@ import java.util.List;
  * @author   <a href="mailto:marco.soeima@gmail.com">Marco Soeima</a>
  * @version  2012/10/01
  */
-public class TarPathItem extends AbstractPathItem {
+public class TarPathItem extends AbstractArchivePathItem {
 
     /**
      * Creates a new {@link TarPathItem} object.
@@ -49,49 +41,28 @@ public class TarPathItem extends AbstractPathItem {
     }
 
     /**
-     * @see  PathItem#findResourcesForExtension(String, RecursionType)
+     * @see  AbstractArchivePathItem#newArchive(String)
      */
-    @Override public List<Resource> findResourcesForExtension(String extension, RecursionType recursionType) {
-        return null;
+    @Override public Archive newArchive(String path) {
+        return new TarArchive(path);
     }
 
     /**
-     * @see  PathItem#getInputStream(String)
+     * @see  AbstractArchivePathItem#newResource( String)
      */
-    @Override public InputStream getInputStream(String name) {
-        return null;
+    @Override public Resource newResource(String relativePath) {
+        return new TarResource(this, relativePath);
     }
 
     /**
-     * @see  PathItem#findResources(String, RecursionType, int)
+     * @see  AbstractArchivePathItem#toURL(String)
      */
-    @Override protected List<Resource> findResources(String name, RecursionType recursionType, int amount) {
-        TarArchiveInputStream is = null;
+    @Override protected String toURL(String path) {
 
-        try {
-            is = new TarArchiveInputStream(new FileInputStream(getPath()));
-        }
-        catch (FileNotFoundException e) {
-            throw new ResourceException(e);
+        if (path.startsWith("tar:")) {
+            return path;
         }
 
-        try {
-
-            for (TarArchiveEntry tarEntry = null; tarEntry != null; tarEntry = is.getNextTarEntry()) {
-                tarEntry.getName();
-            }
-        }
-        catch (IOException e) {
-            throw new ResourceException(e);
-        }
-
-        return null;
-    }
-
-    /**
-     * @see  PathItem#getURI()
-     */
-    @Override public URI getURI() {
-        return null;
+        return Paths.normalize("tar:file:/" + path + "!/", '/');
     }
 } // end class TarPathItem
