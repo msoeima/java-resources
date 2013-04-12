@@ -22,16 +22,16 @@ import com.soeima.resources.PathItem;
 import com.soeima.resources.RecursionType;
 import com.soeima.resources.Resource;
 import com.soeima.resources.ResourceException;
-import com.soeima.resources.util.CollectionUtil;
+import com.soeima.resources.archive.cache.ArchiveCache;
+import com.soeima.resources.archive.cache.ArchiveCachePool;
+import com.soeima.resources.archive.cache.ArchiveEntry;
 import com.soeima.resources.util.Paths;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 /**
@@ -42,25 +42,17 @@ import java.util.jar.JarFile;
  */
 public class JarPathItem extends AbstractPathItem {
 
-    /** The backing <tt>Jar</tt> file. */
-    private JarFile jar;
+    /** The backing <tt>Jar</tt> archive cache. */
+    private ArchiveCache cache;
 
     /**
      * Creates a new {@link JarPathItem} object.
      *
-     * @param   path  The path to the <tt>Jar</tt> or <tt>ZIP</tt> file.
-     *
-     * @throws  ResourceException  If <code>path</code> does not point to a valid <tt>Jar</tt> or <tt>ZIP</tt> file.
+     * @param  path  The path to the <tt>Jar</tt> or <tt>ZIP</tt> file.
      */
     public JarPathItem(String path) {
         super(path);
-
-        try {
-            jar = new JarFile(path);
-        }
-        catch (IOException e) {
-            throw new ResourceException(e);
-        }
+        cache = ArchiveCachePool.getCache(new JarArchive(path));
     }
 
     /**
@@ -71,20 +63,14 @@ public class JarPathItem extends AbstractPathItem {
      */
     protected JarPathItem(String path, JarFile jar) {
         super(path);
-        this.jar = jar;
+        this.cache = ArchiveCachePool.getCache(new JarArchive(jar));
     }
 
     /**
      * @see  PathItem#getInputStream(String)
      */
     @Override public InputStream getInputStream(String name) {
-
-        try {
-            return jar.getInputStream(jar.getEntry(name));
-        }
-        catch (IOException e) {
-            return null;
-        }
+        return cache.getInputStream(name);
     }
 
     /**
@@ -153,8 +139,8 @@ public class JarPathItem extends AbstractPathItem {
     private List<Resource> findResources(JarEntryFilter filter, int amount) {
         List<Resource> resources = new ArrayList<Resource>();
 
-        for (Iterator<JarEntry> entryIt = CollectionUtil.asIterator(jar.entries()); entryIt.hasNext();) {
-            JarEntry jarEntry = entryIt.next();
+        for (Iterator<ArchiveEntry> entryIt = cache.getEntries(); entryIt.hasNext();) {
+            ArchiveEntry jarEntry = entryIt.next();
 
             if (jarEntry.isDirectory()) {
                 continue;
@@ -173,15 +159,6 @@ public class JarPathItem extends AbstractPathItem {
 
         return resources;
     } // end method findResources
-
-    /**
-     * Returns the backing <tt>Jar</tt> file.
-     *
-     * @return  The backing {@link JarFile}.
-     */
-    protected JarFile getJar() {
-        return jar;
-    }
 
     /**
      * Instances that implement this interface are used to filter <tt>Jar</tt> entries.
