@@ -17,8 +17,8 @@
 
 package com.soeima.resources.archive.cache;
 
-import com.soeima.resources.util.ReferenceValueMap;
-import com.soeima.resources.util.ReferenceValueMap.ReferenceType;
+import com.soeima.resources.util.collections.ReferenceValueMap;
+import com.soeima.resources.util.collections.ReferenceValueMap.ReferenceType;
 import java.util.concurrent.ConcurrentMap;
 
 /**

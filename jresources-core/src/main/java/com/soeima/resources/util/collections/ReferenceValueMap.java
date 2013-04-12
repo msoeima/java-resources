@@ -15,7 +15,7 @@
  *
  */
 
-package com.soeima.resources.util;
+package com.soeima.resources.util.collections;
 
 import com.google.common.collect.MapMaker;
 import java.util.Collection;
