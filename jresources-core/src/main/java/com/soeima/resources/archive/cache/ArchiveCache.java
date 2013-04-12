@@ -18,10 +18,11 @@
 package com.soeima.resources.archive.cache;
 
 import com.soeima.resources.util.IOUtil;
+import com.soeima.resources.util.ReferenceValueMap;
+import com.soeima.resources.util.ReferenceValueMap.ReferenceType;
 import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Implements an archive cache. The archive cache provides a cache for a single archive.
@@ -38,7 +39,7 @@ public class ArchiveCache {
     private Archive archive;
 
     /** Cache the archive entries according to their respective names. */
-    private Map<String, ArchiveEntry> cache;
+    private ConcurrentMap<String, ArchiveEntry> cache;
 
     /**
      * Creates a new {@link ArchiveCache} object.
@@ -47,7 +48,7 @@ public class ArchiveCache {
      */
     public ArchiveCache(Archive archive) {
         this.archive = archive;
-        cache = new HashMap<String, ArchiveEntry>();
+        cache = new ReferenceValueMap<String, ArchiveEntry>(ReferenceType.Soft);
     }
 
     /**
@@ -71,7 +72,7 @@ public class ArchiveCache {
 
         if (entry == null) {
             entry = archive.getEntry(name);
-            cache.put(name, entry);
+            cache.putIfAbsent(name, entry);
         }
 
         return entry;

@@ -17,8 +17,9 @@
 
 package com.soeima.resources.archive.cache;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.soeima.resources.util.ReferenceValueMap;
+import com.soeima.resources.util.ReferenceValueMap.ReferenceType;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Provides a pool of {@link ArchiveCache}s. The {@link ArchiveCache}s are automatically cleared when they are no longer
@@ -30,7 +31,8 @@ import java.util.Map;
 public class ArchiveCachePool {
 
     /** The archive cache pool. Each {@link ArchiveCache} is associated to its respective archive path. */
-    private static Map<String, ArchiveCache> pool = new HashMap<String, ArchiveCache>();
+    private static ConcurrentMap<String, ArchiveCache> pool =
+        new ReferenceValueMap<String, ArchiveCache>(ReferenceType.Weak);
 
     /**
      * Creates a new {@link ArchiveCachePool} object.
@@ -56,7 +58,7 @@ public class ArchiveCachePool {
 
         if (cache == null) {
             cache = new ArchiveCache(archive);
-            pool.put(path, cache);
+            pool.putIfAbsent(path, cache);
         }
 
         return cache;
