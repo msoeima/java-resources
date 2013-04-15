@@ -24,6 +24,7 @@ import com.soeima.resources.ResourceLoader;
 import com.soeima.resources.util.IOUtil;
 import com.soeima.resources.util.ReflectionUtil;
 import com.soeima.resources.util.Strings;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class ResourceExtensionLoader {
         ResourceLoader rl = new ResourceLoader();
         rl.setRecursionType(RecursionType.Recursive);
 
-        for (String path : Strings.split(System.getProperty("java.class.path"), ";")) {
+        for (String path : Strings.split(System.getProperty("java.class.path"), File.pathSeparator)) {
             rl.addPath(path);
         }
 
