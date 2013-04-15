@@ -68,11 +68,15 @@ public class ArchiveCache {
             return null;
         }
 
-        ArchiveEntry entry = cache.get(name);
+        ArchiveEntry entry = null;
 
-        if (entry == null) {
-            entry = archive.getEntry(name);
-            cache.putIfAbsent(name, entry);
+        synchronized (cache) {
+            entry = cache.get(name);
+
+            if (entry == null) {
+                entry = archive.getEntry(name);
+                cache.put(name, entry);
+            }
         }
 
         return entry;

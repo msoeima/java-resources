@@ -53,12 +53,16 @@ public class ArchiveCachePool {
             return null;
         }
 
+        ArchiveCache cache = null;
         String path = archive.getPath();
-        ArchiveCache cache = pool.get(path);
 
-        if (cache == null) {
-            cache = new ArchiveCache(archive);
-            pool.putIfAbsent(path, cache);
+        synchronized (pool) {
+            cache = pool.get(path);
+
+            if (cache == null) {
+                cache = new ArchiveCache(archive);
+                pool.put(path, cache);
+            }
         }
 
         return cache;
