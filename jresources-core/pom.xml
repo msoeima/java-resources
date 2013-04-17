@@ -8,17 +8,24 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
+  <properties>
+    <commons-compress.version>1.5</commons-compress.version>
+    <guava.version>14.0.1</guava.version>
+  </properties>
+
   <groupId>com.soeima</groupId>
   <artifactId>jresources-core</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>JResource Core</name>
 
-  <properties>
-    <guava.version>14.0.1</guava.version>
-  </properties>
-
   <dependencies>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
+      <version>${commons-compress.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
